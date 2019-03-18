@@ -6,24 +6,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Hospital {
   private String id;
 
-  private String nome;
+  private String name;
 
-  private String descricao;
+  private String description;
 
-  public Hospital( String nome, String descricao){
-    this.nome = nome;
-    this.descricao = descricao;
+  public Hospital( String name, String description){
+    this.name = name;
+    this.description = description;
   }
 
   public String getId() {
     return id;
   }
 
-  public String getNome() {
-    return nome;
+  public String getName() {
+    return name;
   }
 
-  public String getDescricao() {
-    return descricao;
+  public String getDescription() {
+    return description;
   }
 }
