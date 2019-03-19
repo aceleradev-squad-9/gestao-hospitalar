@@ -1,6 +1,8 @@
 package gestao.exception.handler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
@@ -23,15 +25,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
       BindingResult bindingResult = exception.getBindingResult();
 
-      Map<String,String> validationMessages = new HashMap<>();
+      Map<String,List<String>> validationMessages = new HashMap<>();
       bindingResult
         .getFieldErrors()
         .stream()
-        .forEach(fieldError -> {
-          validationMessages.put(
-            fieldError.getField(), 
-            fieldError.getDefaultMessage()
+        .forEach(f -> {
+          String field = f.getField();
+    
+          List<String> messagesForThisField = validationMessages.getOrDefault(
+            field,
+            new ArrayList<>()
           );
+          
+          messagesForThisField.add(f.getDefaultMessage());
+          
+          validationMessages.put(field, messagesForThisField);
         });
 
       return new ResponseEntity<>(validationMessages, HttpStatus.BAD_REQUEST);
