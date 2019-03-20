@@ -1,4 +1,4 @@
-package gestao.hospital;
+package gestao.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
