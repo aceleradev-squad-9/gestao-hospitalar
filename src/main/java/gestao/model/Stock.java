@@ -3,8 +3,10 @@ package gestao.model;
 import org.springframework.data.annotation.Id;
 
 public class Stock {
-    @Id
+    
+	@Id
     private String id;
-
+	
+	private Hospital hospital;
 
 }

@@ -10,7 +10,9 @@ public class Pessoa {
     @Id
     private String id;
 
-    Pessoa() {
-
-    }
+    private String name;
+    
+    private String phoneNumber;
+    
+    private Address address;
 }
