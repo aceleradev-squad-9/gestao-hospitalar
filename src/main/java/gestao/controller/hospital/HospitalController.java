@@ -1,10 +1,11 @@
-package gestao.controller;
+package gestao.controller.hospital;
 
 import javax.validation.Valid;
 
-import gestao.model.HospitalDto;
-import gestao.service.HospitalService;
-import gestao.model.Hospital;
+import gestao.model.hospital.Hospital;
+import gestao.model.hospital.HospitalDto;
+import gestao.service.hospital.HospitalService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
