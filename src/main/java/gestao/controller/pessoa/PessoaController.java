@@ -2,6 +2,8 @@ package gestao.controller.pessoa;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +28,7 @@ public class PessoaController {
 
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Pessoa create(@RequestBody Pessoa pessoa) {
+	public Pessoa create(@RequestBody @Valid Pessoa pessoa) {
 		return this.service.create(pessoa);
 	}
 
@@ -41,7 +43,7 @@ public class PessoaController {
 	}
 
 	@PutMapping
-	public Pessoa update(@RequestBody Pessoa pessoa) {
+	public Pessoa update(@RequestBody @Valid Pessoa pessoa) {
 		return this.service.update(pessoa);
 	}
 

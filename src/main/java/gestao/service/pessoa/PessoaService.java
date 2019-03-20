@@ -11,7 +11,7 @@ import gestao.model.pessoa.Pessoa;
 import gestao.repository.pessoa.PessoaRepository;
 
 /**
- * Classe responsável pela implementação dos serviços de uma {@link Pessoa}
+ * Classe responsável pela implementação dos serviços de {@link Pessoa}.
  * 
  * @author edmilson.santana
  *

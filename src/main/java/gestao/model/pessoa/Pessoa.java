@@ -4,11 +4,17 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import gestao.model.converter.DateDeserializer;
+import gestao.model.converter.DateSerializer;
 
 /**
  * Classe responsável pela representação de uma Pessoa.
@@ -21,23 +27,26 @@ public class Pessoa {
 
 	@Id
 	private String id;
-	
-	@NotBlank(message="O nome é obrigatório.")
+
+	@NotBlank(message = "O nome é obrigatório.")
 	private String nome;
-	
-	@CPF(message="O cpf informado é inválido.")
+
+	@CPF(message = "O cpf não foi informado ou é inválido.")
 	private String cpf;
-	
-	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+
+	@NotNull(message = "A data de nascimento não foi informada ou é inválida.")
+	@Past(message = "A data de nascimento deve estar no passado.")
+	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonSerialize(using = DateSerializer.class)
 	private LocalDate dataNascimento;
-	
-	@NotNull(message="O sexo da pessoa é obrigatório.")
+
+	@NotNull(message = "O sexo da pessoa não foi informado ou é inválido.")
 	private Sexo sexo;
-	
+
 	Pessoa() {
-		
+
 	}
-	
+
 	Pessoa(String nome, String cpf, LocalDate dataNascimento, Sexo sexo) {
 		this.nome = nome;
 		this.cpf = cpf;
