@@ -1,4 +1,4 @@
-package gestao.hospital;
+package gestao.model;
 
 import javax.validation.constraints.NotBlank;
 
