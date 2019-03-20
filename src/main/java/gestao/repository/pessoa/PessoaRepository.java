@@ -11,6 +11,9 @@ import gestao.model.pessoa.Pessoa;
  *
  */
 public interface PessoaRepository extends MongoRepository<Pessoa, String> {
+
+	Boolean existsByCpf(String cpf);
 	
+	Boolean existsByCpfAndIdNot(String cpf, String id);
 
 }
