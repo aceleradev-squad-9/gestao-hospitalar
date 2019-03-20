@@ -1,8 +1,9 @@
-package gestao.service;
+package gestao.service.hospital;
 
-import gestao.model.Hospital;
-import gestao.model.HospitalDto;
-import gestao.repository.HospitalRepository;
+import gestao.model.hospital.Hospital;
+import gestao.model.hospital.HospitalDto;
+import gestao.repository.hospital.HospitalRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
