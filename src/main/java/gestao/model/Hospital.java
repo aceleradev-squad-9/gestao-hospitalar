@@ -2,6 +2,8 @@ package gestao.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Document(collection="hospital")
 public class Hospital {
   private String id;
@@ -9,6 +11,15 @@ public class Hospital {
   private String name;
 
   private String description;
+
+  // capacidade maxima de leitos do hospital
+  private Integer beds;
+
+  private List<Patient> patients;
+
+  private Address address;
+
+  private Stock stock;
 
   private Hospital(){}
 
