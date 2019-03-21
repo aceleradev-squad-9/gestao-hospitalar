@@ -1,7 +1,9 @@
-package gestao.model;
+package gestao.model.patient;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import gestao.model.pessoa.Pessoa;
 
 import java.time.LocalDateTime;
 
