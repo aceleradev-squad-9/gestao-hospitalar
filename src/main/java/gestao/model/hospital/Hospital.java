@@ -2,6 +2,10 @@ package gestao.model.hospital;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import gestao.model.address.Address;
+import gestao.model.patient.Patient;
+import gestao.model.stock.Stock;
+
 import java.util.List;
 
 @Document(collection="hospital")
