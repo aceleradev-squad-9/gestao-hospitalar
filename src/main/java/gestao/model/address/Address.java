@@ -3,22 +3,22 @@ package gestao.model.address;
 import org.springframework.data.annotation.Id;
 
 public class Address {
-    @Id
-    private String id;
+  @Id
+  private String id;
 
-    private String street;
-    
-    private String district;
+  private String street;
 
-    private String city;
-    
-    private String state;
+  private String district;
 
-    private String cep;
+  private String city;
 
-    private String number;
+  private String state;
 
-    private Double latitude;
+  private String cep;
 
-    private Double longitude;
+  private String number;
+
+  private Double latitude;
+
+  private Double longitude;
 }
