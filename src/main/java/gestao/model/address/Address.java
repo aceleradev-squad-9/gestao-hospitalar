@@ -1,4 +1,4 @@
-package gestao.model;
+package gestao.model.address;
 
 import org.springframework.data.annotation.Id;
 
