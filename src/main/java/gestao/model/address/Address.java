@@ -1,6 +1,7 @@
 package gestao.model.address;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,10 +22,10 @@ public class Address {
   @NotBlank(message = "Você deve informar o número.")
   private String number;
 
-  @NotBlank(message = "Você deve informar a latitude.")
+  @NotNull(message = "Você deve informar a latitude.")
   private Double latitude;
 
-  @NotBlank(message = "Você deve informar a longitude.")
+  @NotNull(message = "Você deve informar a longitude.")
   private Double longitude;
 
   public Address(
