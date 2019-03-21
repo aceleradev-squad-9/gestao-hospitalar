@@ -6,18 +6,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class Address {
+  @NotBlank(message = "Você deve informar a rua.")
   private String street;
 
+  @NotBlank(message = "Você deve informar a cidade.")
   private String city;
 
+  @NotBlank(message = "Você deve informar o estado.")
   private String state;
 
+  @NotBlank(message = "Você deve informar o cep.")
   private String cep;
 
+  @NotBlank(message = "Você deve informar o número.")
   private String number;
 
+  @NotBlank(message = "Você deve informar a latitude.")
   private Double latitude;
 
+  @NotBlank(message = "Você deve informar a longitude.")
   private Double longitude;
 
   public Address(
@@ -38,17 +45,14 @@ public class Address {
     this.longitude = longitude;
   }
 
-  @NotBlank(message = "Você deve informar a rua.")
   public String getStreet() {
     return street;
   }
 
-  @NotBlank(message = "Você deve informar a cidade.")
   public String getCity() {
     return city;
   }
   
-  @NotBlank(message = "Você deve informar o estado.")
   public String getState() {
     return state;
   }
