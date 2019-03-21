@@ -48,12 +48,16 @@ public class Hospital {
     return maximumNuberOfBeds;
   }
 
+  public Address getAddress() {
+    return address;
+  }
+
   public static Hospital createFromDto(HospitalDto dto){
     Hospital hospital = new Hospital();
-    hospital.id = dto.getId();
     hospital.name = dto.getName();
     hospital.description = dto.getDescription();
     hospital.maximumNuberOfBeds = dto.getMaximumNuberOfBeds();
+    hospital.address = dto.getAddress();
     return hospital;
   }
 }
