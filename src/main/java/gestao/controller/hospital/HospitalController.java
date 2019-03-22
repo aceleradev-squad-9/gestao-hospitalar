@@ -34,4 +34,10 @@ public class HospitalController {
   public List<Hospital> findAll() {
     return hospitalService.findAll();
   }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(code = HttpStatus.NO_CONTENT)
+  public void deleteHospital(@PathVariable("id") String id){
+    hospitalService.delete(id);
+  }
 }

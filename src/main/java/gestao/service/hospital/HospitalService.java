@@ -1,5 +1,6 @@
 package gestao.service.hospital;
 
+import gestao.exception.hospital.HospitalNotFoundException;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
 import gestao.repository.hospital.HospitalRepository;
@@ -21,10 +22,14 @@ public class HospitalService {
   }
 
   public Hospital findById(String id) {
-    return hospitalRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+    return hospitalRepository.findById(id).orElseThrow(HospitalNotFoundException::new);
   }
 
   public List<Hospital> findAll() {
     return hospitalRepository.findAll();
+  }
+
+  public void delete(String id){
+    hospitalRepository.delete(this.findById(id));
   }
 }
