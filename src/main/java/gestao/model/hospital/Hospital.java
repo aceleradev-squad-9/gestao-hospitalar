@@ -52,6 +52,13 @@ public class Hospital {
     return address;
   }
 
+  public void updateFromDto(HospitalDto dto){
+    this.name = dto.getName();
+    this.description = dto.getDescription();
+    this.maximumNuberOfBeds = dto.getMaximumNuberOfBeds();
+    this.address = dto.getAddress();
+  }
+
   public static Hospital createFromDto(HospitalDto dto){
     Hospital hospital = new Hospital();
     hospital.name = dto.getName();

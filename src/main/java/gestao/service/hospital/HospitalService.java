@@ -32,4 +32,10 @@ public class HospitalService {
   public void delete(String id){
     hospitalRepository.delete(this.findById(id));
   }
+
+  public Hospital update(String hospitalId, HospitalDto hospitalDto){
+    Hospital hospital = this.findById(hospitalId);
+    hospital.updateFromDto(hospitalDto);
+    return hospitalRepository.save(hospital);
+  }
 }
