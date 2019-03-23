@@ -16,37 +16,38 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-      MethodArgumentNotValidException exception,
-      HttpHeaders headers, 
-      HttpStatus status,
-      WebRequest request
-    ) {
-      BindingResult bindingResult = exception.getBindingResult();
+  
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(
+    MethodArgumentNotValidException exception,
+    HttpHeaders headers, 
+    HttpStatus status,
+    WebRequest request
+  ) {
+    BindingResult bindingResult = exception.getBindingResult();
 
-      Map<String,List<String>> validationMessages = new HashMap<>();
-      bindingResult
-        .getFieldErrors()
-        .stream()
-        .forEach(f -> {
-          String field = f.getField();
+    Map<String,List<String>> validationMessages = new HashMap<>();
+    bindingResult
+      .getFieldErrors()
+      .stream()
+      .forEach(f -> {
+        String field = f.getField();
+  
+        List<String> messagesForThisField = validationMessages.getOrDefault(
+          field,
+          new ArrayList<>()
+        );
+        
+        messagesForThisField.add(f.getDefaultMessage());
+        
+        validationMessages.put(field, messagesForThisField);
+      });
     
-          List<String> messagesForThisField = validationMessages.getOrDefault(
-            field,
-            new ArrayList<>()
-          );
-          
-          messagesForThisField.add(f.getDefaultMessage());
-          
-          validationMessages.put(field, messagesForThisField);
-        });
-      
-      BadRequestResponseEntity response = new BadRequestResponseEntity(
-        validationMessages
-      );
-      
+    BadRequestResponseEntity response = new BadRequestResponseEntity(
+      validationMessages
+    );
+    
 
-      return new ResponseEntity<>(response, headers, status);
-    }
+    return new ResponseEntity<>(response, headers, status);
+  }
 };
