@@ -2,6 +2,8 @@ package gestao.model.address;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Max;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,10 +30,14 @@ public class Address {
   @NotBlank(message = "Você deve informar o número.")
   private String number;
 
+  @Min( value = -90, message = "A latitude deve estar contida no intervalo [-90, 90]")
+  @Max( value = +90, message = "A latitude deve estar contida no intervalo [-90, 90]")
   @NotNull(message = "A latitude não deve ser nula e deve ser um número real.")
   @JsonDeserialize(using = DoubleDeserializer.class)
   private Double latitude;
 
+  @Min( value = -180, message = "A longitude deve estar contida no intervalo [-180, 180]")
+  @Max( value = +180, message = "A longitude deve estar contida no intervalo [-180, 180]")
   @NotNull(message = "A longitude não deve ser nula e deve ser um número real.")
   @JsonDeserialize(using = DoubleDeserializer.class)
   private Double longitude;
