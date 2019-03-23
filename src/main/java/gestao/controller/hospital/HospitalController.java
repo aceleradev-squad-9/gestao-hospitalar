@@ -63,7 +63,6 @@ public class HospitalController {
 	}
 
 	@GetMapping("/{hospitalId}/stock/")
-	@ResponseStatus(code = HttpStatus.CREATED)
 	public List<ProductItemDto> findStockProducts(@PathVariable Long hospitalId) {
 
 		Hospital hospital = hospitalService.findById(hospitalId);
