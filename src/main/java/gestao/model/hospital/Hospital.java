@@ -1,54 +1,79 @@
 package gestao.model.hospital;
 
-import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.Collections;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import gestao.model.address.Address;
 import gestao.model.patient.Patient;
-import gestao.model.stock.Stock;
+import gestao.model.product.ProductItem;
 
-import java.util.List;
-
-@Document(collection="hospital")
+@Entity
 public class Hospital {
-  private String id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  private String name;
+	private String name;
 
-  private String description;
+	private String description;
 
-  // capacidade maxima de leitos do hospital
-  private Integer beds;
+	// capacidade maxima de leitos do hospital
+	private Integer beds;
 
-  private List<Patient> patients;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
+	private List<Patient> patients;
 
-  private Address address;
+	@OneToOne(fetch = FetchType.EAGER)
+	private Address address;
 
-  private Stock stock;
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
+	private List<ProductItem> stock;
 
-  private Hospital(){}
+	Hospital() {
+	}
 
-  public Hospital( String name, String description){
-    this.name = name;
-    this.description = description;
-  }
+	public Hospital(String name, String description) {
+		this.name = name;
+		this.description = description;
+	}
 
-  public String getId() {
-    return id;
-  }
+	public void addProductInStock(ProductItem productItem) {
+		if (productItem != null) {
+			this.stock.add(productItem);
+			productItem.setHospital(this);
+		}
+	}
+	
+	public List<ProductItem> getStock() {
+		return Collections.unmodifiableList(this.stock);
+	}
 
-  public String getName() {
-    return name;
-  }
+	public Long getId() {
+		return id;
+	}
 
-  public String getDescription() {
-    return description;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public static Hospital createFromDto(HospitalDto dto){
-    Hospital hospital = new Hospital();
-    hospital.id = dto.getId();
-    hospital.name = dto.getName();
-    hospital.description = dto.getDescription();
-    return hospital;
-  }
+	public String getDescription() {
+		return description;
+	}
+
+	public static Hospital createFromDto(HospitalDto dto) {
+		Hospital hospital = new Hospital();
+		hospital.id = dto.getId();
+		hospital.name = dto.getName();
+		hospital.description = dto.getDescription();
+		return hospital;
+	}
 }
