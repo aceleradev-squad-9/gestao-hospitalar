@@ -11,7 +11,6 @@ import gestao.model.converter.IntegerDeserializer;
 import gestao.model.address.Address;
 
 public class HospitalDto {
-  private String id;
 
   @NotBlank(message = "O hospital tem que ter nome.")
   private String name;
@@ -27,10 +26,6 @@ public class HospitalDto {
   @NotNull(message = "O hospital deve ter um endereço.")
   @Valid
   private Address address;
-
-  public String getId() {
-    return id;
-  }
 
   public String getName() {
     return name;
