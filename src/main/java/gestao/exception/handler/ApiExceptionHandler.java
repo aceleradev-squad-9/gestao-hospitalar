@@ -41,7 +41,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
           
           validationMessages.put(field, messagesForThisField);
         });
+      
+      BadRequestResponseEntity response = new BadRequestResponseEntity(
+        validationMessages
+      );
+      
 
-      return new ResponseEntity<>(validationMessages, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(response, headers, status);
     }
 };
