@@ -16,8 +16,7 @@ public class Hospital {
 
   private String description;
 
-  // capacidade maxima de leitos do hospital
-  private Integer beds;
+  private Integer maximumNumberOfBeds;
 
   private List<Patient> patients;
 
@@ -27,9 +26,10 @@ public class Hospital {
 
   private Hospital(){}
 
-  public Hospital( String name, String description){
+  public Hospital(String name, String description, Integer maximumNumberOfBeds){
     this.name = name;
     this.description = description;
+    this.maximumNumberOfBeds = maximumNumberOfBeds;
   }
 
   public String getId() {
@@ -44,11 +44,27 @@ public class Hospital {
     return description;
   }
 
+  public Integer getMaximumNumberOfBeds() {
+    return maximumNumberOfBeds;
+  }
+
+  public Address getAddress() {
+    return address;
+  }
+
+  public void updateFromDto(HospitalDto dto){
+    this.name = dto.getName();
+    this.description = dto.getDescription();
+    this.maximumNumberOfBeds = dto.getMaximumNumberOfBeds();
+    this.address = dto.getAddress();
+  }
+
   public static Hospital createFromDto(HospitalDto dto){
     Hospital hospital = new Hospital();
-    hospital.id = dto.getId();
     hospital.name = dto.getName();
     hospital.description = dto.getDescription();
+    hospital.maximumNumberOfBeds = dto.getMaximumNumberOfBeds();
+    hospital.address = dto.getAddress();
     return hospital;
   }
 }
