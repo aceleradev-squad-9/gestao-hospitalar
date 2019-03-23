@@ -5,6 +5,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gestao.model.converter.IntegerDeserializer;
 
@@ -26,6 +28,19 @@ public class HospitalDto {
   @NotNull(message = "O hospital deve ter um endereço.")
   @Valid
   private Address address;
+
+  @JsonCreator
+  public HospitalDto(
+    @JsonProperty("name") String name,
+    @JsonProperty("description") String description,
+    @JsonProperty("maximumNumberOfBeds") Integer maximumNumberOfBeds,
+    @JsonProperty("address") Address address  
+  ){
+    this.name = name;
+    this.description = description;
+    this.maximumNumberOfBeds = maximumNumberOfBeds;
+    this.address = address;
+  }
 
   public String getName() {
     return name;
