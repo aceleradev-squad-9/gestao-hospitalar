@@ -18,7 +18,7 @@ public class HospitalDto {
 
   @Min(value = 1, message = "O número de leitos deve ser maior ou igual a 1.")
   @NotNull(message = "O número de leitos não deve ser nulo.")
-  private Integer maximumNuberOfBeds;
+  private Integer maximumNumberOfBeds;
 
   @NotNull(message = "O hospital deve ter um endereço.")
   @Valid
@@ -36,8 +36,8 @@ public class HospitalDto {
     return description;
   }
 
-  public Integer getMaximumNuberOfBeds(){
-    return maximumNuberOfBeds;
+  public Integer getMaximumNumberOfBeds(){
+    return maximumNumberOfBeds;
   }
 
   public Address getAddress(){

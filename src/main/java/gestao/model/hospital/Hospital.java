@@ -16,7 +16,7 @@ public class Hospital {
 
   private String description;
 
-  private Integer maximumNuberOfBeds;
+  private Integer maximumNumberOfBeds;
 
   private List<Patient> patients;
 
@@ -26,10 +26,10 @@ public class Hospital {
 
   private Hospital(){}
 
-  public Hospital(String name, String description, Integer maximumNuberOfBeds){
+  public Hospital(String name, String description, Integer maximumNumberOfBeds){
     this.name = name;
     this.description = description;
-    this.maximumNuberOfBeds = maximumNuberOfBeds;
+    this.maximumNumberOfBeds = maximumNumberOfBeds;
   }
 
   public String getId() {
@@ -44,8 +44,8 @@ public class Hospital {
     return description;
   }
 
-  public Integer getMaximumNuberOfBeds() {
-    return maximumNuberOfBeds;
+  public Integer getMaximumNumberOfBeds() {
+    return maximumNumberOfBeds;
   }
 
   public Address getAddress() {
@@ -55,7 +55,7 @@ public class Hospital {
   public void updateFromDto(HospitalDto dto){
     this.name = dto.getName();
     this.description = dto.getDescription();
-    this.maximumNuberOfBeds = dto.getMaximumNuberOfBeds();
+    this.maximumNumberOfBeds = dto.getMaximumNumberOfBeds();
     this.address = dto.getAddress();
   }
 
@@ -63,7 +63,7 @@ public class Hospital {
     Hospital hospital = new Hospital();
     hospital.name = dto.getName();
     hospital.description = dto.getDescription();
-    hospital.maximumNuberOfBeds = dto.getMaximumNuberOfBeds();
+    hospital.maximumNumberOfBeds = dto.getMaximumNumberOfBeds();
     hospital.address = dto.getAddress();
     return hospital;
   }
