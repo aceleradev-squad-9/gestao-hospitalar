@@ -3,7 +3,13 @@ package gestao.model.address;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import gestao.model.converter.DoubleDeserializer;
 
 @Document
 public class Address {
@@ -22,20 +28,23 @@ public class Address {
   @NotBlank(message = "Você deve informar o número.")
   private String number;
 
-  @NotNull(message = "Você deve informar a latitude.")
+  @NotNull(message = "A latitude não deve ser nula e deve ser um número real.")
+  @JsonDeserialize(using = DoubleDeserializer.class)
   private Double latitude;
 
-  @NotNull(message = "Você deve informar a longitude.")
+  @NotNull(message = "A longitude não deve ser nula e deve ser um número real.")
+  @JsonDeserialize(using = DoubleDeserializer.class)
   private Double longitude;
 
+  @JsonCreator
   public Address(
-    String street, 
-    String city, 
-    String state, 
-    String cep, 
-    String number, 
-    Double latitude, 
-    Double longitude 
+    @JsonProperty("street") String street, 
+    @JsonProperty("city") String city, 
+    @JsonProperty("state") String state, 
+    @JsonProperty("cep") String cep, 
+    @JsonProperty("number") String number, 
+    @JsonProperty("latitude") Double latitude, 
+    @JsonProperty("longitude") Double longitude 
   ){
     this.street = street;
     this.city = city;
