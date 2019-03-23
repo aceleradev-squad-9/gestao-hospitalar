@@ -1,9 +1,6 @@
-package gestao.model.stock;
+package gestao.model.product.bloodbank;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection="blood_bank")
-public class BloodBank extends Stock {
+public class BloodBank {
 	
 	private Integer id;
 	
