@@ -46,6 +46,7 @@ public class HospitalController {
   }
 
   @PutMapping(value="/{id}")
+  @ResponseStatus(code=HttpStatus.OK)
   public Hospital updateHospital(
     @PathVariable String id, 
     @Valid @RequestBody HospitalDto hospitalDto 
