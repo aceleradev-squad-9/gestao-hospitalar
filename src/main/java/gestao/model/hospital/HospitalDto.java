@@ -5,6 +5,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gestao.model.converter.IntegerDeserializer;
+
 import gestao.model.address.Address;
 
 public class HospitalDto {
@@ -17,7 +20,8 @@ public class HospitalDto {
   private String description;
 
   @Min(value = 1, message = "O número de leitos deve ser maior ou igual a 1.")
-  @NotNull(message = "O número de leitos não deve ser nulo.")
+  @NotNull(message = "O número de leitos não deve ser nulo e deve ser um número inteiro.")
+	@JsonDeserialize(using = IntegerDeserializer.class)
   private Integer maximumNumberOfBeds;
 
   @NotNull(message = "O hospital deve ter um endereço.")
