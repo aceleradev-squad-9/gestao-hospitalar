@@ -1,7 +1,7 @@
 package gestao.controller.hospital;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 import javax.validation.Valid;
 
@@ -80,11 +80,11 @@ public class HospitalController {
 
 	@GetMapping("/{hospitalId}/stock/")
 	public List<ProductItemDto> findStockProducts(@PathVariable Long hospitalId) {
-
-		hospitalService.verifyIfExistsById(hospitalId);
-
-		return productService.findProductItemByHospital(hospitalId).stream()
-				.map((productItem) -> ProductItem.convertToDto(productItem)).collect(Collectors.toList());
+		return hospitalService.findById(hospitalId)
+			.getStock()
+			.stream()
+			.map(ProductItem::convertToDto)
+			.collect(toList());
 	}
 
 	@GetMapping("/{hospitalId}/stock/{productId}")
@@ -92,6 +92,8 @@ public class HospitalController {
 
 		hospitalService.verifyIfExistsById(hospitalId);
 
-		return ProductItem.convertToDto(productService.findProductItemByHospitalAndProduct(productId, hospitalId));
+		return ProductItem.convertToDto(
+			productService.findProductItemByHospitalAndProduct(productId, hospitalId)
+		);
 	}
 }
