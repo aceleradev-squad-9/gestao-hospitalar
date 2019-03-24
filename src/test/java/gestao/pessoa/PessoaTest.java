@@ -1,4 +1,4 @@
-package pessoa;
+package gestao.pessoa;
 
 public class PessoaTest {
 
