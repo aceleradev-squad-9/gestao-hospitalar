@@ -52,16 +52,27 @@ public class ProductService {
 	}
 
 	/**
-	 * Método responsável por realizar a busca de um item de produto para um
-	 * determinado hospital.
+	 * Método responsável por realizar a busca de um determinado item de produto para um
+	 * hospital.
 	 * 
 	 * @param productId  - {@link Long}
 	 * @param hospitalId - {@link Long}
-	 * @return item de produto - {@link List}
+	 * @return item de produto do hospital - {@link List}
 	 */
-	public ProductItem findProductItem(Long productId, Long hospitalId) {
-		return this.productItemRepository.findProductItem(productId, hospitalId)
+	public ProductItem findProductItemByHospitalAndProduct(Long productId, Long hospitalId) {
+		return this.productItemRepository.findProductItemByHospitalAndProduct(productId, hospitalId)
 				.orElseThrow(() -> new ProductNotFoundException());
+	}
+	
+	/**
+	 * Método responsável por realizar a busca dos itens de produto para um
+	 * hospital.
+	 * 
+	 * @param hospitalId - {@link Long}
+	 * @return lista de itens de produto do hospital - {@link List}
+	 */
+	public List<ProductItem> findProductItemByHospital(Long hospitalId) {
+		return this.productItemRepository.findProductItemByHospital(hospitalId);
 	}
 
 	/**

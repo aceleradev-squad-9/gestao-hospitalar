@@ -34,7 +34,7 @@ public class HospitalController {
 	@Autowired
 	private ProductService productService;
 
-	@PostMapping("")
+	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public Hospital createHospital(@Valid @RequestBody HospitalDto hospitalDto) {
 		return hospitalService.createHospital(hospitalDto);
@@ -72,24 +72,26 @@ public class HospitalController {
 		ProductItem productItem = productService.createProductItem(productId, productItemDto);
 
 		hospital.addProductInStock(productItem);
-		
+
 		hospitalService.save(hospital);
-		
+
 		return ProductItem.convertToDto(productItem);
 	}
 
 	@GetMapping("/{hospitalId}/stock/")
 	public List<ProductItemDto> findStockProducts(@PathVariable Long hospitalId) {
 
-		Hospital hospital = hospitalService.findById(hospitalId);
+		hospitalService.verifyIfExistsById(hospitalId);
 
-		return hospital.getStock().stream().map((productItem) -> ProductItem.convertToDto(productItem))
-				.collect(Collectors.toList());
+		return productService.findProductItemByHospital(hospitalId).stream()
+				.map((productItem) -> ProductItem.convertToDto(productItem)).collect(Collectors.toList());
 	}
 
 	@GetMapping("/{hospitalId}/stock/{productId}")
 	public ProductItemDto findStockProduct(@PathVariable Long hospitalId, @PathVariable Long productId) {
 
-		return ProductItem.convertToDto(productService.findProductItem(productId, hospitalId));
+		hospitalService.verifyIfExistsById(hospitalId);
+
+		return ProductItem.convertToDto(productService.findProductItemByHospitalAndProduct(productId, hospitalId));
 	}
 }

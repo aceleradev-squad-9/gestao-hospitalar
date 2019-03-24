@@ -27,6 +27,16 @@ public class HospitalService {
 		return hospitalRepository.findById(id).orElseThrow(() -> new HospitalNotFoundException());
 	}
 
+	public void verifyIfExistsById(Long id) {
+		if (!this.existsById(id)) {
+			throw new HospitalNotFoundException();
+		}
+	}
+
+	private Boolean existsById(Long id) {
+		return hospitalRepository.existsById(id);
+	}
+
 	public Iterable<Hospital> findAll() {
 		return hospitalRepository.findAll();
 	}

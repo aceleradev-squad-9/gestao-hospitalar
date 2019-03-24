@@ -5,11 +5,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import gestao.model.BaseEntity;
+
 @Entity
-public class Product {
+@SQLDelete(sql = "UPDATE Product SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
+public class Product extends BaseEntity {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String name;
