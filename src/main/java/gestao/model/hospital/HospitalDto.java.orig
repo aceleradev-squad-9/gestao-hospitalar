@@ -13,13 +13,22 @@ import gestao.model.converter.IntegerDeserializer;
 import gestao.model.address.Address;
 
 public class HospitalDto {
+<<<<<<< HEAD
+	private Long id;
+=======
+>>>>>>> 0a8dbbc717db01bfe0419c92ff4461b61ca46dd7
 
-  @NotBlank(message = "O hospital tem que ter nome.")
-  private String name;
+	@NotBlank(message = "O hospital tem que ter nome.")
+	private String name;
 
-  @NotBlank(message = "O hospital tem que ter uma descrição.")
-  private String description;
+	@NotBlank(message = "O hospital tem que ter uma descrição.")
+	private String description;
 
+<<<<<<< HEAD
+	public Long getId() {
+		return id;
+	}
+=======
   @Min(value = 1, message = "O número de leitos deve ser maior ou igual a 1.")
   @NotNull(message = "O número de leitos não deve ser nulo e deve ser um número inteiro.")
 	@JsonDeserialize(using = IntegerDeserializer.class)
@@ -41,11 +50,17 @@ public class HospitalDto {
     this.maximumNumberOfBeds = maximumNumberOfBeds;
     this.address = address;
   }
+>>>>>>> 0a8dbbc717db01bfe0419c92ff4461b61ca46dd7
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
+<<<<<<< HEAD
+	public String getDescription() {
+		return description;
+	}
+=======
   public String getDescription() {
     return description;
   }
@@ -57,4 +72,5 @@ public class HospitalDto {
   public Address getAddress(){
     return address;
   }
+>>>>>>> 0a8dbbc717db01bfe0419c92ff4461b61ca46dd7
 }

@@ -34,12 +34,16 @@ test {
 }
 
 dependencies {
+<<<<<<< HEAD
 	compile 'org.postgresql:postgresql:42.2.5'
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compile 'org.springframework.boot:spring-boot-starter-data-rest'
+=======
+	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+>>>>>>> 0a8dbbc717db01bfe0419c92ff4461b61ca46dd7
 	compile 'org.springframework.boot:spring-boot-starter-web'
 
 	testImplementation('org.junit.jupiter:junit-jupiter:5.4.1')
 	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
-	
 }
