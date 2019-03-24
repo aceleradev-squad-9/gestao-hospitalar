@@ -35,7 +35,7 @@ public class Hospital {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
 	private List<Patient> patients = new ArrayList<>();
 
-	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade=CascadeType.ALL)
 	private Address address;
 
 	@JsonIgnore
