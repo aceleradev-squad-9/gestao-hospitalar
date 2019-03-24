@@ -56,5 +56,16 @@ public class ProductItem {
 	public String getProductDescription() {
 		return this.product.getDescription();
 	}
+	
+	public static ProductItemDto convertToDto(ProductItem productItem) {
+		ProductItemDto productItemDto = null;
+		if (productItem != null) {
+			productItemDto = new ProductItemDto();
+			productItemDto.setAmount(productItem.getAmount());
+			productItemDto.setName(productItem.getProductName());
+			productItemDto.setDescription(productItem.getProductDescription());
+		}
+		return productItemDto;
+	}
 
 }

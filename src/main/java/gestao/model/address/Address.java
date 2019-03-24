@@ -49,10 +49,14 @@ public class Address {
 	@JsonDeserialize(using = DoubleDeserializer.class)
 	private Double longitude;
 
+	Address() {
+	}
+	
 	@JsonCreator
-	public Address(@JsonProperty("street") String street, @JsonProperty("city") String city,
+	public Address(@JsonProperty("id") Long id, @JsonProperty("street") String street, @JsonProperty("city") String city,
 			@JsonProperty("state") String state, @JsonProperty("cep") String cep, @JsonProperty("number") String number,
 			@JsonProperty("latitude") Double latitude, @JsonProperty("longitude") Double longitude) {
+		this.id = id;
 		this.street = street;
 		this.city = city;
 		this.state = state;
@@ -88,5 +92,9 @@ public class Address {
 
 	public Double getLongitude() {
 		return longitude;
+	}
+	
+	public Long getId() {
+		return id;
 	}
 }

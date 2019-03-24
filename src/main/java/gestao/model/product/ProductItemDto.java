@@ -37,15 +37,4 @@ public class ProductItemDto {
 		this.amount = amount;
 	}
 
-	public static ProductItemDto convertToDto(ProductItem productItem) {
-		ProductItemDto productItemDto = null;
-		if (productItem != null) {
-			productItemDto = new ProductItemDto();
-			productItemDto.setAmount(productItem.getAmount());
-			productItemDto.setName(productItem.getProductName());
-			productItemDto.setDescription(productItem.getProductDescription());
-		}
-		return productItemDto;
-	}
-
 }

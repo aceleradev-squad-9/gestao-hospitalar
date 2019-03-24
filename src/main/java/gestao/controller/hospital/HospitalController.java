@@ -64,7 +64,7 @@ public class HospitalController {
 
 	@PostMapping("/{hospitalId}/stock/{productId}")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Hospital addProductInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
+	public ProductItemDto addProductInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
 			@RequestBody @Valid ProductItemDto productItemDto) {
 
 		Hospital hospital = hospitalService.findById(hospitalId);
@@ -72,8 +72,10 @@ public class HospitalController {
 		ProductItem productItem = productService.createProductItem(productId, productItemDto);
 
 		hospital.addProductInStock(productItem);
-
-		return hospitalService.save(hospital);
+		
+		hospitalService.save(hospital);
+		
+		return ProductItem.convertToDto(productItem);
 	}
 
 	@GetMapping("/{hospitalId}/stock/")
@@ -81,13 +83,13 @@ public class HospitalController {
 
 		Hospital hospital = hospitalService.findById(hospitalId);
 
-		return hospital.getStock().stream().map((productItem) -> ProductItemDto.convertToDto(productItem))
+		return hospital.getStock().stream().map((productItem) -> ProductItem.convertToDto(productItem))
 				.collect(Collectors.toList());
 	}
 
 	@GetMapping("/{hospitalId}/stock/{productId}")
 	public ProductItemDto findStockProduct(@PathVariable Long hospitalId, @PathVariable Long productId) {
 
-		return ProductItemDto.convertToDto(productService.findProductItem(productId, hospitalId));
+		return ProductItem.convertToDto(productService.findProductItem(productId, hospitalId));
 	}
 }

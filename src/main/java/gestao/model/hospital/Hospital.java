@@ -1,5 +1,6 @@
 package gestao.model.hospital;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gestao.model.address.Address;
 import gestao.model.patient.Patient;
@@ -28,14 +31,16 @@ public class Hospital {
 
 	private Integer maximumNumberOfBeds;
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
-	private List<Patient> patients;
+	private List<Patient> patients = new ArrayList<>();
 
 	@OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	private Address address;
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
-	private List<ProductItem> stock;
+	private List<ProductItem> stock = new ArrayList<>();
 
 	Hospital() {
 	}
