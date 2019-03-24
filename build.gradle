@@ -38,7 +38,10 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.springframework.boot:spring-boot-starter-web'
 
-	testImplementation('org.junit.jupiter:junit-jupiter:5.4.1')
+	testCompile 'org.junit.jupiter:junit-jupiter:5.4.1'
+
+	testCompile 'org.mockito:mockito-core:2.+'
+	testCompile 'org.mockito:mockito-junit-jupiter:2.18.3'
 	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	
