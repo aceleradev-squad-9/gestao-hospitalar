@@ -15,8 +15,8 @@ import org.hibernate.validator.constraints.br.CPF;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import gestao.util.DateDeserializer;
-import gestao.util.DateSerializer;
+import gestao.util.jackson.DateDeserializer;
+import gestao.util.jackson.DateSerializer;
 
 /**
  * Classe responsável pela representação de uma pessoa.

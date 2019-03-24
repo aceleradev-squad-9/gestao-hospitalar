@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import gestao.util.DateUtil;
+
 /**
  * Classe responsável pela serialização de um {@link LocalDate} em um formato de
  * {@link String} para um JSON.

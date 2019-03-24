@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import gestao.model.converter.IntegerDeserializer;
+import gestao.util.jackson.IntegerDeserializer;
 
 import gestao.model.address.Address;
 
