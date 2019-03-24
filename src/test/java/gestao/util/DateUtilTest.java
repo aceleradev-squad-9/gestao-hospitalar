@@ -13,6 +13,13 @@ import org.junit.jupiter.api.Test;
 public class DateUtilTest {
 
   @Test
+  @DisplayName("Deve receber LocalDate caso a String contenha uma data no formato: dd/MM/yyyy")
+  public void shouldReceiveLocalDateIfTheStringIsWithTheCorrectFormat(){
+    LocalDate localDate = toDate("01/02/1994");
+    assertEquals(LocalDate.of(1994, 02, 01), localDate);
+  }
+
+  @Test
   @DisplayName("Deve converter a String '01/01/2001' para LocalDate")
   public void shouldConvertToLocalDate(){
     LocalDate localDate = toDate("01/01/2001");
