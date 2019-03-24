@@ -1,53 +1,61 @@
 package gestao.model.patient;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import gestao.model.pessoa.Pessoa;
-
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Document(collection="patient")
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+
+import gestao.model.hospital.Hospital;
+import gestao.model.person.Person;
+
+
+@Entity
 public class Patient {
-    @Id
-    private String id;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotNull(message = "Os dados da pessoa é obrigatório.")
-    private Pessoa person;
+	@NotNull(message = "Os dados da pessoa é obrigatório.")
+	@ManyToOne(fetch=FetchType.EAGER)
+	private Person person;
 
-    private LocalDateTime timeCheckIn;
+	private LocalDateTime timeCheckIn;
 
-    private LocalDateTime timeCheckOut;
+	private LocalDateTime timeCheckOut;
 
-    private ObjectId hospitalId;
+	@ManyToOne(fetch=FetchType.LAZY)
+	private Hospital hospital;
 
-    Patient(Pessoa person, LocalDateTime timeCheckIn, LocalDateTime timeCheckOut, ObjectId hospitalId) {
-        this.person = person;
-        this.timeCheckIn = timeCheckIn;
-        this.timeCheckOut = timeCheckOut;
-        this.hospitalId = hospitalId;
-    }
+	Patient(Person person, LocalDateTime timeCheckIn, LocalDateTime timeCheckOut, Hospital hospital) {
+		this.person = person;
+		this.timeCheckIn = timeCheckIn;
+		this.timeCheckOut = timeCheckOut;
+		this.hospital = hospital;
+	}
 
-    // Getters
-    public String getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Pessoa getPerson() {
-        return person;
-    }
+	public Person getPerson() {
+		return person;
+	}
 
-    public LocalDateTime getTimeCheckIn() {
-        return timeCheckIn;
-    }
+	public LocalDateTime getTimeCheckIn() {
+		return timeCheckIn;
+	}
 
-    public LocalDateTime getTimeCheckOut() {
-        return timeCheckOut;
-    }
+	public LocalDateTime getTimeCheckOut() {
+		return timeCheckOut;
+	}
 
-    public ObjectId getHospitalId() {
-        return hospitalId;
-    }
+	public Hospital getHospitalId() {
+		return hospital;
+	}
 }
