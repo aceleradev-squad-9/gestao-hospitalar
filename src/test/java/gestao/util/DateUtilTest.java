@@ -53,4 +53,35 @@ public class DateUtilTest {
     LocalDate localDate = toDate("05/1/2001");
     assertEquals(null, localDate);
   }
+
+  
+  @Test
+  @DisplayName("Deve receber uma String com uma data se LocalDate estiver no formato correto.")
+  public void shouldReceiveAStringWithDateIfTheLocalDateIsWithTheCorrectFormat(){
+    LocalDate localDate = LocalDate.of(1994, 12, 1);
+    assertEquals("01/12/1994", toStr(localDate));
+  }
+
+  @Test
+  @DisplayName("Deve receber uma String com uma data se LocalDate estiver no formato correto.")
+  public void shouldReceiveAStringWithDateIfTheLocalDateIsWithTheCorrectFormat2(){
+    LocalDate localDate = LocalDate.of(94, 12, 1);
+    assertEquals("01/12/0094", toStr(localDate));
+  }
+
+  @Test
+  @DisplayName("Deve receber uma String com a mesma data do objeto LocalDate.")
+  public void shouldReceiveAStringWithTheSameDateAsLocalDate(){
+    LocalDate localDate = LocalDate.of(94, 12, 1);
+    String stringDate = toStr(localDate);
+
+    String[] stringDatePieces = stringDate.split("/");
+    Integer day = Integer.valueOf(stringDatePieces[0]);
+    Integer month = Integer.valueOf(stringDatePieces[1]);
+    Integer year = Integer.valueOf(stringDatePieces[2]);
+
+    assertEquals(day.intValue(), localDate.getDayOfMonth());
+    assertEquals(month.intValue(), localDate.getMonthValue());
+    assertEquals(year.intValue(), localDate.getYear());
+  }
 }
