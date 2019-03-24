@@ -34,10 +34,12 @@ test {
 }
 
 dependencies {
-	compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	compile 'org.postgresql:postgresql:42.2.5'
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.springframework.boot:spring-boot-starter-web'
 
 	testImplementation('org.junit.jupiter:junit-jupiter:5.4.1')
 	
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	
 }
