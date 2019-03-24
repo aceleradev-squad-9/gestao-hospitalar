@@ -1,4 +1,4 @@
-package gestao.model.converter;
+package gestao.util.jackson;
 
 import java.io.IOException;
 

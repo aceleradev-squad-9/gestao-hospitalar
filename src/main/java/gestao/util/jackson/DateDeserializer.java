@@ -1,4 +1,4 @@
-package gestao.util;
+package gestao.util.jackson;
 
 import java.io.IOException;
 import java.time.LocalDate;
