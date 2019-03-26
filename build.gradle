@@ -38,6 +38,8 @@ dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
 	compile 'org.springframework.boot:spring-boot-starter-web'
 
+	implementation 'com.google.maps:google-maps-services:0.9.3'
+
 	testCompile 'org.junit.jupiter:junit-jupiter:5.4.1'
 
 	testCompile 'org.mockito:mockito-core:2.+'
