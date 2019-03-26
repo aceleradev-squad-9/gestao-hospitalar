@@ -1,27 +1,30 @@
 package gestao.controller.hospital;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
 
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
 import gestao.service.hospital.HospitalService;
 
-@WebMvcTest(HospitalController.class)
+@WebMvcTest(controllers = HospitalController.class)
 public class HospitalControllerTest {
 
   @Autowired
@@ -31,9 +34,9 @@ public class HospitalControllerTest {
   private HospitalService mockedHospitalService;
 
   @Test
-  @DisplayName("Deve receber código http 201 indicando que um novo hospital foi criado.")
-  public void shouldReceive201HttpStatusCode() throws Exception{
-    HospitalDto hospitalDto = new HospitalDto(
+  @DisplayName("Deve receber o body em formato json com as info do hospital criado e http status code 201.")
+  public void shouldReceive201HttpStatusCodeWithTheCorrectJsonBody() throws Exception{
+    final HospitalDto hospitalDto = new HospitalDto(
       "Hospital 1", 
       "Descrição do hospital 1", 
       123, 
@@ -49,19 +52,27 @@ public class HospitalControllerTest {
       )  
     );
 
-    when(mockedHospitalService.createHospital(hospitalDto)).thenReturn(
-      Hospital.createFromDto(hospitalDto)
-    );
+    final Hospital hospital = Hospital.createFromDto(hospitalDto);
+    when(
+      mockedHospitalService.createHospital(isA(HospitalDto.class))
+    ).thenReturn(hospital);
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
-  
-    mvc.perform(
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
+    MvcResult mvcResult = mvc.perform(
       post("/hospital")
         .contentType(MediaType.APPLICATION_JSON)
         .content(hospitalDtoJson)
-    )
-    .andExpect(status().isCreated());    
+        .accept(MediaType.APPLICATION_JSON)
+    ) 
+    .andExpect(status().isCreated())
+    .andReturn();    
+    
+    final String hospitalJson = objectMapper.writeValueAsString(hospital);
+    assertEquals(
+      hospitalJson,
+      mvcResult.getResponse().getContentAsString()
+    );
   }
 
 
