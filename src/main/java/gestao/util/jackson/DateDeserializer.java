@@ -1,4 +1,4 @@
-package gestao.util;
+package gestao.util.jackson;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import gestao.util.DateUtil;
 
 /**
  * Classe responsável pela deserialização de uma {@link String}, de um JSON,

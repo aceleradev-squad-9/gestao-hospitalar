@@ -45,11 +45,6 @@ public class Hospital {
 	Hospital() {
 	}
 
-	public Hospital(String name, String description) {
-		this.name = name;
-		this.description = description;
-	}
-
 	public void addProductInStock(ProductItem productItem) {
 		if (productItem != null) {
 			this.stock.add(productItem);

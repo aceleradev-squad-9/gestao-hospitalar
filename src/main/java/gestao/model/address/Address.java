@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import gestao.model.converter.DoubleDeserializer;
+import gestao.util.jackson.DoubleDeserializer;
 
 @Entity
 public class Address {
