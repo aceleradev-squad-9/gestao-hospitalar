@@ -99,6 +99,10 @@ public class Address {
 		return longitude;
 	}
 	
+	public String getDistrict() {
+		return district;
+	}
+	
 	public String getFormattedAddress() {
 		
 		return String.format("%s, %s - %s, %s - %s, %s", 

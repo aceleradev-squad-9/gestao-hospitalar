@@ -1,4 +1,4 @@
-package gestao.pessoa;
+package gestao.address;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
