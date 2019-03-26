@@ -27,6 +27,9 @@ public class Address {
 
 	@NotBlank(message = "Você deve informar a cidade.")
 	private String city;
+	
+	@NotBlank(message = "Você deve informar o bairro.")
+	private String district;
 
 	@NotBlank(message = "Você deve informar o estado.")
 	private String state;
@@ -53,12 +56,14 @@ public class Address {
 	}
 	
 	@JsonCreator
-	public Address(@JsonProperty("id") Long id, @JsonProperty("street") String street, @JsonProperty("city") String city,
+	public Address(@JsonProperty("id") Long id, @JsonProperty("street") String street,
+			@JsonProperty("city") String city, @JsonProperty("district") String district,
 			@JsonProperty("state") String state, @JsonProperty("cep") String cep, @JsonProperty("number") String number,
 			@JsonProperty("latitude") Double latitude, @JsonProperty("longitude") Double longitude) {
 		this.id = id;
 		this.street = street;
 		this.city = city;
+		this.district = district;
 		this.state = state;
 		this.cep = cep;
 		this.number = number;
@@ -92,6 +97,13 @@ public class Address {
 
 	public Double getLongitude() {
 		return longitude;
+	}
+	
+	public String getFormattedAddress() {
+		
+		return String.format("%s, %s - %s, %s - %s, %s", 
+				this.street, this.number, this.district, this.city,
+				this.state, this.cep);
 	}
 	
 	public Long getId() {
