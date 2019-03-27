@@ -43,7 +43,7 @@ public class ProductController {
 
 	@GetMapping("/{id}")
 	public Product find(@PathVariable Long id) {
-		return this.service.find(id);
+		return this.service.findById(id);
 	}
 
 	@PutMapping

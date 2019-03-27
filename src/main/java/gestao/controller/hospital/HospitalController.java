@@ -1,5 +1,7 @@
 package gestao.controller.hospital;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class HospitalController {
 	}
 
 	@GetMapping
-	public Iterable<Hospital> findAll() {
+	public List<Hospital> findAll() {
 		return hospitalService.findAll();
 	}
 
