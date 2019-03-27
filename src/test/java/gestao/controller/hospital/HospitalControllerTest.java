@@ -37,7 +37,7 @@ public class HospitalControllerTest {
   private HospitalController hospitalController;
 
   @Test
-  @DisplayName("Deve receber o body em formato json com as info do hospital criado e http status code 201.")
+  @DisplayName("Deve receber o body em formato json com as info do hospital criado e também deve receber http status code 201.")
   public void shouldReceive201HttpStatusCodeWithTheCorrectJsonBody() throws Exception{
     final HospitalDto hospitalDto = new HospitalDto(
       "Hospital 1", 
@@ -80,7 +80,7 @@ public class HospitalControllerTest {
   }
 
   @Test
-  @DisplayName("Verificar se o controlador está utilizando a instancia correta de HospitalDto para o método HospitalService.createHospital")
+  @DisplayName("Verificar se o controlador está passando a instancia correta de HospitalDto para o método HospitalService.createHospital quando utilizado o método hospitalController.createHospital.")
   public void shouldSendTheCorrectInstanceOfHospitalDtoToCreateHospitalMethod(){
     final HospitalDto hospitalDto = new HospitalDto(
       "Hospital 1", 
