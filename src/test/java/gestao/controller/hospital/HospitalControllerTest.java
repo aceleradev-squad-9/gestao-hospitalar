@@ -80,7 +80,7 @@ public class HospitalControllerTest {
   }
 
   @Test
-  @DisplayName("Verificar se o controlador está passando a instancia correta de HospitalDto para o método HospitalService.createHospital quando utilizado o método hospitalController.createHospital.")
+  @DisplayName("Verificar se o controlador está passando a instância correta de HospitalDto para o método HospitalService.createHospital quando utilizado o método hospitalController.createHospital.")
   public void shouldSendTheCorrectInstanceOfHospitalDtoToCreateHospitalMethod(){
     final HospitalDto hospitalDto = new HospitalDto(
       "Hospital 1", 
