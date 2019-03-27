@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gestao.exception.product.ProductNotFoundException;
 import gestao.model.product.Product;
-import gestao.model.product.ProductItem;
-import gestao.model.product.ProductItemDto;
 import gestao.repository.product.ProductItemRepository;
 import gestao.repository.product.ProductRepository;
 
@@ -39,43 +38,6 @@ public class ProductService {
 	}
 
 	/**
-	 * Método responsável por criar um item do produto, com sua respectiva
-	 * quantidade e produto relacionado.
-	 * 
-	 * @param productId      - {@link Long}
-	 * @param productItemDto - {@link ProductItemDto}
-	 * @return item do produto - {@link ProductItem}
-	 */
-	public ProductItem createProductItem(Long productId, ProductItemDto productItemDto) {
-
-		return new ProductItem(this.find(productId), productItemDto.getAmount());
-	}
-
-	/**
-	 * Método responsável por realizar a busca de um determinado item de produto para um
-	 * hospital.
-	 * 
-	 * @param productId  - {@link Long}
-	 * @param hospitalId - {@link Long}
-	 * @return item de produto do hospital - {@link List}
-	 */
-	public ProductItem findProductItemByHospitalAndProduct(Long productId, Long hospitalId) {
-		return this.productItemRepository.findProductItemByHospitalAndProduct(productId, hospitalId)
-				.orElseThrow(() -> new ProductNotFoundException());
-	}
-	
-	/**
-	 * Método responsável por realizar a busca dos itens de produto para um
-	 * hospital.
-	 * 
-	 * @param hospitalId - {@link Long}
-	 * @return lista de itens de produto do hospital - {@link List}
-	 */
-	public List<ProductItem> findProductItemByHospital(Long hospitalId) {
-		return this.productItemRepository.findProductItemByHospital(hospitalId);
-	}
-
-	/**
 	 * Método responsável por obter uma lista de produtos.
 	 * 
 	 * @return lista de produtos - {@link List}
@@ -92,7 +54,7 @@ public class ProductService {
 	 * @param id - {@link Long}
 	 * @return produto - {@link Product}
 	 */
-	public Product find(Long id) {
+	public Product findById(Long id) {
 		return this.productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException());
 	}
 
@@ -125,13 +87,16 @@ public class ProductService {
 	}
 
 	/**
-	 * Método responsável por remover um produto a partir do seu identificador
-	 * único. Caso a pessoa não seja encontrada, o método lança um
-	 * {@link ProductNotFoundException}.
+	 * Método responsável por remover um produto e os seus itens associados, a
+	 * partir do identificador único do produto. Caso o produto não seja encontrada,
+	 * o método lança um {@link ProductNotFoundException}.
 	 * 
 	 * @param id - {@link Long}
 	 */
+	@Transactional
 	public void delete(Long id) {
-		this.productRepository.delete(this.find(id));
+		Product product = this.findById(id);
+		this.productRepository.delete(product);
+		this.productItemRepository.deleteAllByProduct(product);
 	}
 }

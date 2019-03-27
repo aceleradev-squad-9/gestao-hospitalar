@@ -3,6 +3,7 @@ package gestao.model.hospital;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,8 +16,11 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import gestao.exception.hospital.InvalidHospitalStockAmountException;
+import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
 import gestao.model.patient.Patient;
+import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 
 @Entity
@@ -35,25 +39,57 @@ public class Hospital {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
 	private List<Patient> patients = new ArrayList<>();
 
-	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	private Address address;
 
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
 	private List<ProductItem> stock = new ArrayList<>();
 
-	Hospital() {
-	}
+	private static final Integer MIN_STOCK_AMOUNT = 4;
 
-	public void addProductInStock(ProductItem productItem) {
-		if (productItem != null) {
-			this.stock.add(productItem);
-			productItem.setHospital(this);
-		}
+	Hospital() {
 	}
 
 	public List<ProductItem> getStock() {
 		return Collections.unmodifiableList(this.stock);
+	}
+
+	public ProductItem addProductInStock(Product product, Integer amount) {
+		ProductItem productItem = this.getProductItem(product).orElse(null);
+
+		if (productItem != null) {
+			productItem.increaseAmount(amount);
+		} else {
+			productItem = ProductItem.builder()
+									 .withAmount(amount)
+									 .withProduct(product)
+									 .withHospital(this).build();
+			this.stock.add(productItem);
+		}
+		
+		return productItem;
+	}
+
+	public void reduceStock(Product product, Integer amount) {
+
+		ProductItem productItem = this.findProductInStock(product);
+
+		Boolean hasReduced = productItem.reduceAmount(amount, MIN_STOCK_AMOUNT);
+
+		if (!hasReduced) {
+			throw new InvalidHospitalStockAmountException();
+		}
+	}
+
+	private Optional<ProductItem> getProductItem(Product product) {
+
+		return this.stock.stream().filter((item) -> item.getProduct().equals(product)).findFirst();
+	}
+	
+	public ProductItem findProductInStock(Product product) {
+		return this.getProductItem(product)
+				.orElseThrow(() -> new ProductNotFoundInHospitalStockException());
 	}
 
 	public Long getId() {

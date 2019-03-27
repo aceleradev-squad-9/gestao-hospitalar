@@ -1,8 +1,10 @@
-package gestao.service.address;
+package gestao.util.geo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,19 +35,23 @@ public class GeoApi {
 		return new DistanceMatrixApiRequest(context);
 	}
 
-	public List<Long> getDistances(String origin, String[] destinations) {
+	private List<Long> getDistances(String origin, String[] destinations) {
 		List<Long> distances = new ArrayList<>();
 
 		try {
 			DistanceMatrixApiRequest request = this.getDistanceMatrixRequest();
-			DistanceMatrix distanceMatrix = request.origins(origin)
-					.destinations(destinations).await();
+			DistanceMatrix distanceMatrix = request.origins(origin).destinations(destinations).await();
 			distances = this.getDistances(distanceMatrix);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
 		}
 
 		return distances;
+	}
+
+	public Integer getIndexOfMinorDistance(String origin, String[] destinations) {
+		List<Long> distances = this.getDistances(origin, destinations);
+		return IntStream.range(0, distances.size()).boxed().min(Comparator.comparingLong(distances::get)).orElse(-1);
 	}
 
 	private List<Long> getDistances(DistanceMatrix distanceMatrix) {
