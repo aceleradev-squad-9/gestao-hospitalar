@@ -36,7 +36,7 @@ public class HospitalServiceTest {
       "Descrição do hospital 1", 
       123, 
       new Address(
-        1L,
+        null,
         "Rua do Hospital 1",
         "Cidade do hospital 1",
         "Bairro do hospital 1",
@@ -49,11 +49,66 @@ public class HospitalServiceTest {
     );
 
     final Hospital hospital = Hospital.createFromDto(hospitalDto);
-
     when(mockedHospitalRepository.save(hospital)).thenReturn(hospital);
 
-    hospitalService.createHospital(hospitalDto);
+    final Hospital hospitalCreatedByService = hospitalService.createHospital(hospitalDto);
 
-    verify(mockedHospitalRepository, times(1)).save(isA(Hospital.class));
+    assertEquals(
+      hospital.getName(),
+      hospitalCreatedByService.getName()
+    );
+
+    assertEquals(
+      hospital.getDescription(),
+      hospitalCreatedByService.getDescription()
+    );
+
+    assertEquals(
+      hospital.getMaximumNumberOfBeds(),
+      hospitalCreatedByService.getMaximumNumberOfBeds()
+    );
+
+    final Address address = hospital.getAddress();
+    final Address createdAddress = hospitalCreatedByService.getAddress();
+
+    assertEquals(
+      address.getStreet(),
+      createdAddress.getStreet()
+    );
+
+    assertEquals(
+      address.getDistrict(),
+      createdAddress.getDistrict()
+    );
+
+    assertEquals(
+      address.getCity(),
+      createdAddress.getCity()
+    );
+
+    assertEquals(
+      address.getState(),
+      createdAddress.getState()
+    );
+
+    assertEquals(
+      address.getCep(),
+      createdAddress.getCep()
+    );
+
+    assertEquals(
+      address.getNumber(),
+      createdAddress.getNumber()
+    );
+
+    assertEquals(
+      address.getLatitude(),
+      createdAddress.getLatitude()
+    );
+
+    assertEquals(
+      address.getLongitude(),
+      createdAddress.getLongitude()
+    );
   }
 }
