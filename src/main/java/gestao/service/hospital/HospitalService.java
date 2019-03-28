@@ -89,7 +89,7 @@ public class HospitalService {
 		return hospitals.get(indexOfMin);
 	}
 
-	private List<Hospital> findHospitalsOrderedByDistance(List<Hospital> hospitals, Address origin){
+	private List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin){
 		List<Long> distances = geoApi.getDistances(
 			origin.getFormattedAddress(), 
 			this.getHospitalsFormattedAddresses(hospitals)	
