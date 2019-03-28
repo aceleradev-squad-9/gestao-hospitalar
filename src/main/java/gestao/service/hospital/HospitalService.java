@@ -1,6 +1,10 @@
 package gestao.service.hospital;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -66,11 +70,15 @@ public class HospitalService {
 		return this.findNearestHospital(this.findAll(), origin);
 	}
 
+	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals){
+		return hospitals.stream()
+			.map((hospital) -> hospital.getAddress().getFormattedAddress())
+			.toArray(String[]::new);
+	}
+
 	@Cacheable(value = "nearestHospital")
 	private Hospital findNearestHospital(List<Hospital> hospitals, Address origin) {
-
-		String[] destinations = hospitals.stream().map((hospital) -> hospital.getAddress().getFormattedAddress())
-				.toArray(String[]::new);
+		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
 		Integer indexOfMin = geoApi.getIndexOfMinorDistance(origin.getFormattedAddress(), destinations);
 
@@ -79,6 +87,37 @@ public class HospitalService {
 		}
 
 		return hospitals.get(indexOfMin);
+	}
+
+	private List<Hospital> findHospitalsOrderedByDistance(List<Hospital> hospitals, Address origin){
+		List<Long> distances = geoApi.getDistances(
+			origin.getFormattedAddress(), 
+			this.getHospitalsFormattedAddresses(hospitals)	
+		);
+
+		if(distances.size() == 0){
+			throw new NearestHospitalNotFoundException();
+		}
+
+		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
+
+		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);			
+
+		return IntStream.range(1, hospitals.size())
+			.boxed()
+			.sorted((a,b) -> {
+				if(arrayOfDistances.get(a) < arrayOfDistances.get(b)){
+					return -1;
+				}
+
+				if(arrayOfDistances.get(a) > arrayOfDistances.get(b)){
+					return 1;
+				}
+
+				return 0;
+			})
+			.<Hospital>map(i -> arrayOfHospitals.get(i))
+			.collect(toList());
 	}
 
 }

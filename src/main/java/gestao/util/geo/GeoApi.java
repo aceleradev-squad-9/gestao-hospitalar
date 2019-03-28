@@ -35,7 +35,7 @@ public class GeoApi {
 		return new DistanceMatrixApiRequest(context);
 	}
 
-	private List<Long> getDistances(String origin, String[] destinations) {
+	public List<Long> getDistances(String origin, String[] destinations) {
 		List<Long> distances = new ArrayList<>();
 
 		try {
