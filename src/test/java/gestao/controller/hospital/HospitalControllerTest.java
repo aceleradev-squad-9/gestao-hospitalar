@@ -1,10 +1,12 @@
 package gestao.controller.hospital;
 
+import org.mockito.InjectMocks;
 import static org.mockito.Mockito.*;
+
+import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,7 +40,7 @@ public class HospitalControllerTest {
 
   @Test
   @DisplayName("Deve receber o body em formato json com as info do hospital criado e também deve receber http status code 201.")
-  public void shouldReceive201HttpStatusCodeWithTheCorrectJsonBody() throws Exception{
+  public void shouldReceive201HttpStatusCodeWithTheCorrectJsonBody() throws Exception {
     final HospitalDto hospitalDto = new HospitalDto(
       "Hospital 1", 
       "Descrição do hospital 1", 
@@ -106,5 +108,31 @@ public class HospitalControllerTest {
     hospitalController.createHospital(hospitalDto);
 
     verify(mockedHospitalService, times(1)).createHospital(hospitalDto);
+  }
+
+  @Test
+  @DisplayName("Deve receber um status code 400 as mensagens de validação para as informações inválidas enviadas.")
+  public void shouldReceiveTheCorrectValidationMessages() throws Exception {
+    MvcResult k = mvc.perform(
+      post("/hospital")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{}")
+        .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isBadRequest())
+    .andExpect(
+      jsonPath("$.errors.name[0]", is("O hospital tem que ter nome."))
+    )
+    .andExpect(
+      jsonPath("$.errors.description[0]", is("O hospital tem que ter uma descrição."))
+    )
+    .andExpect(
+      jsonPath("$.errors.maximumNumberOfBeds[0]", is("O número de leitos não deve ser nulo e deve ser um número inteiro."))
+    )
+    .andExpect(
+      jsonPath("$.errors.address[0]", is("O hospital deve ter um endereço."))
+    )
+    .andReturn();
+    
   }
 }
