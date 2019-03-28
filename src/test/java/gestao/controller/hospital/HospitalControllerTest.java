@@ -111,9 +111,9 @@ public class HospitalControllerTest {
   }
 
   @Test
-  @DisplayName("Deve receber um status code 400 as mensagens de validação para as informações inválidas enviadas.")
-  public void shouldReceiveTheCorrectValidationMessages() throws Exception {
-    MvcResult k = mvc.perform(
+  @DisplayName("Deve receber um status code 400 as mensagens de validação para os campos que não permitem nulo")
+  public void shouldReceiveTheValidationMessagesForFieldsWhoMustNotBeNull() throws Exception {
+    mvc.perform(
       post("/hospital")
         .contentType(MediaType.APPLICATION_JSON)
         .content("{}")
@@ -133,6 +133,39 @@ public class HospitalControllerTest {
       jsonPath("$.errors.address[0]", is("O hospital deve ter um endereço."))
     )
     .andReturn();
-    
+  }
+
+  @Test
+  @DisplayName("Deve receber uma mensagem de validação indicando que o número de leitos inseridos é menor que o permitido.")
+  public void shouldReceiveTheCorrectValidationMessagesForTheNumberOfBeds() throws Exception {
+    final HospitalDto hospitalDto = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      0, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        34.234,
+        12.121
+      )  
+    );
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
+    mvc.perform(
+      post("/hospital")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(hospitalDtoJson)
+        .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isBadRequest())
+    .andExpect(
+      jsonPath("$.errors.maximumNumberOfBeds[0]", is("O número de leitos deve ser maior ou igual a 1."))
+    )
+    .andReturn();
   }
 }
