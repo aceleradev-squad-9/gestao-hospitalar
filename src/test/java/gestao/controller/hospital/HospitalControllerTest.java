@@ -168,4 +168,71 @@ public class HospitalControllerTest {
     )
     .andReturn();
   }
+
+  @Test
+  @DisplayName("Deve receber as mensagens de valição corretas para um endereço inválido de hospital.")
+  public void shouldReceiveTheCorrectValidationMessagesForAnInvalidHospitalAddress() throws Exception {
+    final HospitalDto hospitalDto = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      0, 
+      new Address(
+        1L,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      )  
+    );
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
+    MvcResult r = mvc.perform(
+      post("/hospital")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(hospitalDtoJson)
+        .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isBadRequest())
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.street'][0]", 
+        is("Você deve informar a rua.")
+      )
+    )
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.city'][0]", 
+        is("Você deve informar a cidade.")
+      )
+    )
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.district'][0]", 
+        is("Você deve informar o bairro.")
+      )
+    )
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.state'][0]", 
+        is("Você deve informar o estado.")
+      )
+    )
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.cep'][0]", 
+        is("Você deve informar o cep.")
+      )
+    )
+    .andExpect(
+      jsonPath(
+        "$.errors.['address.number'][0]", 
+        is("Você deve informar o número.")
+      )
+    )
+    .andReturn();
+  }
 }
