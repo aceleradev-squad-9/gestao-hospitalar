@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import gestao.exception.hospital.HospitalNotFoundException;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
@@ -271,6 +272,27 @@ public class HospitalControllerTest {
     final String hospitalJson = objectMapper.writeValueAsString(hospital);
     assertEquals(
       hospitalJson, 
+      result.getResponse().getContentAsString()
+    );
+  }
+
+  @Test
+  @DisplayName("Deve receber status code 404 quando o serviço não encontra um hospital..")
+  public void shouldReceiveHttpStatusCode404WhenTheHospitalServiceDoesNotFindTheHospital() throws Exception{
+    when(mockedHospitalService.findById(any())).thenThrow(new HospitalNotFoundException());
+
+    MvcResult result = mvc.perform(
+      get("/hospital/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isNotFound())
+    .andReturn();
+
+    // final ObjectMapper objectMapper = new ObjectMapper();
+    // final String hospitalJson = objectMapper.writeValueAsString(hospital);
+    assertEquals(
+      "", 
       result.getResponse().getContentAsString()
     );
   }
