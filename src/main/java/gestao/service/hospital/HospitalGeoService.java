@@ -61,7 +61,7 @@ public class HospitalGeoService {
 
 		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
 
-    return IntStream.range(0, hospitals.size() - 1)
+    return IntStream.range(0, hospitals.size())
       .boxed()
       .sorted((a, b) -> {
         if (arrayOfDistances.get(a) < arrayOfDistances.get(b)) {
