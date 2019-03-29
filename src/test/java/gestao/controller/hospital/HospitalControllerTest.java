@@ -235,4 +235,43 @@ public class HospitalControllerTest {
     )
     .andReturn();
   }
+
+  @Test
+  @DisplayName("Deve receber o hospital buscado a partir do id")
+  public void shouldReceiveAHospitalObjectWhichHasTheId() throws Exception{
+    final HospitalDto hospitalDto = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        34.234,
+        12.121
+      )  
+    );
+
+    final Hospital hospital = Hospital.createFromDto(hospitalDto);
+    when(mockedHospitalService.findById(1L)).thenReturn(hospital);
+
+    MvcResult result = mvc.perform(
+      get("/hospital/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isOk())
+    .andReturn();
+
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalJson = objectMapper.writeValueAsString(hospital);
+    assertEquals(
+      hospitalJson, 
+      result.getResponse().getContentAsString()
+    );
+  }
 }
