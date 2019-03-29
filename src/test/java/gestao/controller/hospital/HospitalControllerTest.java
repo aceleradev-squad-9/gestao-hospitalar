@@ -289,8 +289,6 @@ public class HospitalControllerTest {
     .andExpect(status().isNotFound())
     .andReturn();
 
-    // final ObjectMapper objectMapper = new ObjectMapper();
-    // final String hospitalJson = objectMapper.writeValueAsString(hospital);
     assertEquals(
       "", 
       result.getResponse().getContentAsString()
