@@ -23,7 +23,7 @@ public class GeoApiIntegrationTest {
 	@Test
 	@DisplayName("Deve retornar a menor distância entre endereços de origem e destino.")
 	public void deveRetornarMenorDistanciaEntreEnderecos() {
-		// R. Mário Campelo, 700 - Várzea, Recife - PE, 5074
+		// R. Mário Campelo, 700 - Várzea, Recife - PE, 50740-540
 		Address origin = new Address(1L, "R. Mário Campelo", "Recife", "Várzea", "PE", "50740-540", "700", -8.057940,
 				-34.958440);
 		// Av. Prof. Moraes Rego, 1235 - Cidade Universitária, Recife - PE, 50670-901

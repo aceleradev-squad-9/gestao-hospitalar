@@ -10,7 +10,7 @@ public class NearestHospitalNotFoundException extends RuntimeException {
 	 * 
 	 */
 	private static final long serialVersionUID = -7188411147513217808L;
-	private static final String NEAREST_HOSPITAL_NOT_FOUND_MESSAGE = "O hospital mais próximo não foi encontrado.";
+	private static final String NEAREST_HOSPITAL_NOT_FOUND_MESSAGE = "Não existem hospitais próximos com estoque disponível para transferẽncia.";
 
 	public NearestHospitalNotFoundException() {
 		super(NEAREST_HOSPITAL_NOT_FOUND_MESSAGE);

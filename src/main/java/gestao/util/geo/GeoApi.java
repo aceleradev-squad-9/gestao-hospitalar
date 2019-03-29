@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.DistanceMatrixElementStatus;
 
 /**
  * Classe responsável pelas requisições com as APIs do Google Geo.
@@ -57,7 +58,8 @@ public class GeoApi {
 	private List<Long> getDistances(DistanceMatrix distanceMatrix) {
 
 		return Stream.of(distanceMatrix).flatMap((matrix) -> Stream.of(matrix.rows))
-				.flatMap((row) -> Stream.of(row.elements)).map((element) -> element.distance)
-				.map((distance) -> distance.inMeters).collect(Collectors.toList());
+				.flatMap((row) -> Stream.of(row.elements))
+				.filter((element) -> DistanceMatrixElementStatus.OK.equals(element.status))
+				.map((element) -> element.distance).map((distance) -> distance.inMeters).collect(Collectors.toList());
 	}
 }

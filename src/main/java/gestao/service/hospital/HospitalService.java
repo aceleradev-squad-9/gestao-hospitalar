@@ -1,9 +1,12 @@
 package gestao.service.hospital;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import static java.util.stream.Collectors.toList;
+
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,8 @@ import gestao.exception.hospital.NearestHospitalNotFoundException;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
+import gestao.model.product.Product;
+import gestao.model.product.ProductItem;
 import gestao.repository.hospital.HospitalRepository;
 import gestao.util.geo.GeoApi;
 
@@ -58,66 +63,84 @@ public class HospitalService {
 		return hospitalRepository.save(hospital);
 	}
 
-	public Hospital findNearestHospital(Hospital hospital) {
+	public ProductItem orderProductFromNearestHospitals(Long hospitalId, Product product, Integer amount) {
+		Hospital originHospital = this.findById(hospitalId);
+
+		List<Hospital> nearestHospitals = this.findNearestHospitals(originHospital);
+
+		Hospital nearestHospital = nearestHospitals.stream().filter((hospital) -> hospital.reduceStock(product, amount))
+				.findFirst().orElseThrow(() -> new NearestHospitalNotFoundException());
+
+		ProductItem productItem = originHospital.addProductInStock(product, amount);
+
+		this.save(originHospital);
+		this.save(nearestHospital);
+
+		return productItem;
+	}
+
+	public List<Hospital> findNearestHospitals(Hospital hospital) {
 
 		List<Hospital> hospitals = this.hospitalRepository.findAllByIdNot(hospital.getId());
 
-		return findNearestHospital(hospitals, hospital.getAddress());
+		return findNearestHospitals(hospitals, hospital.getAddress());
 	}
 
-	public Hospital findNearestHospital(Address origin) {
+	public List<Hospital> findNearestHospitals(Address origin) {
 
-		return this.findNearestHospital(this.findAll(), origin);
+		return this.findNearestHospitals(this.findAll(), origin);
 	}
 
-	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals){
-		return hospitals.stream()
-			.map((hospital) -> hospital.getAddress().getFormattedAddress())
-			.toArray(String[]::new);
-	}
-
-	@Cacheable(value = "nearestHospital")
-	private Hospital findNearestHospital(List<Hospital> hospitals, Address origin) {
+	@Cacheable(value = "nearestHospitals")
+	private List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
-		Integer indexOfMin = geoApi.getIndexOfMinorDistance(origin.getFormattedAddress(), destinations);
+		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(), destinations);
 
-		if (indexOfMin < 0) {
+		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
-
-		return hospitals.get(indexOfMin);
+		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 
-	private List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin){
-		List<Long> distances = geoApi.getDistances(
-			origin.getFormattedAddress(), 
-			this.getHospitalsFormattedAddresses(hospitals)	
-		);
+	private List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
+		return IntStream.range(0, distances.size()).boxed()
+				.map((i) -> new AbstractMap.SimpleEntry<>(hospitals.get(i), distances.get(i)))
+				.sorted(Comparator.comparing(AbstractMap.SimpleEntry::getValue))
+				.map(AbstractMap.SimpleEntry::getKey)
+				.collect(Collectors.toList());
+	}
 
-		if(distances.size() == 0){
+	private String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
+		
+		return hospitals.stream().map((hospital) -> hospital.getAddress()
+				.getFormattedAddress()).toArray(String[]::new);
+	}
+
+
+	private List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
+		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(),
+				this.getHospitalsFormattedAddresses(hospitals));
+
+		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
 
 		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
 
-		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);			
+		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
 
-		return IntStream.range(0, hospitals.size()-1)
-			.boxed()
-			.sorted((a,b) -> {
-				if(arrayOfDistances.get(a) < arrayOfDistances.get(b)){
-					return -1;
-				}
+		return IntStream.range(0, hospitals.size() - 1).boxed().sorted((a, b) -> {
+			if (arrayOfDistances.get(a) < arrayOfDistances.get(b)) {
+				return -1;
+			}
 
-				if(arrayOfDistances.get(a) > arrayOfDistances.get(b)){
-					return 1;
-				}
+			if (arrayOfDistances.get(a) > arrayOfDistances.get(b)) {
+				return 1;
+			}
 
-				return 0;
-			})
-			.<Hospital>map(i -> arrayOfHospitals.get(i))
-			.collect(toList());
+			return 0;
+		}).<Hospital>map(i -> arrayOfHospitals.get(i)).collect(toList());
 	}
 
 }

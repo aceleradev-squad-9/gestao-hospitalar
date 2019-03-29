@@ -16,7 +16,6 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import gestao.exception.hospital.InvalidHospitalStockAmountException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
 import gestao.model.patient.Patient;
@@ -61,35 +60,27 @@ public class Hospital {
 		if (productItem != null) {
 			productItem.increaseAmount(amount);
 		} else {
-			productItem = ProductItem.builder()
-									 .withAmount(amount)
-									 .withProduct(product)
-									 .withHospital(this).build();
+			productItem = ProductItem.builder().withAmount(amount).withProduct(product).withHospital(this).build();
 			this.stock.add(productItem);
 		}
-		
+
 		return productItem;
 	}
 
-	public void reduceStock(Product product, Integer amount) {
+	public Boolean reduceStock(Product product, Integer amount) {
 
-		ProductItem productItem = this.findProductInStock(product);
-
-		Boolean hasReduced = productItem.reduceAmount(amount, MIN_STOCK_AMOUNT);
-
-		if (!hasReduced) {
-			throw new InvalidHospitalStockAmountException();
-		}
+		return this.getProductItem(product).map(
+				(productItem) -> productItem.reduceAmount(amount, MIN_STOCK_AMOUNT))
+				.orElse(Boolean.FALSE);
 	}
 
 	private Optional<ProductItem> getProductItem(Product product) {
 
 		return this.stock.stream().filter((item) -> item.getProduct().equals(product)).findFirst();
 	}
-	
+
 	public ProductItem findProductInStock(Product product) {
-		return this.getProductItem(product)
-				.orElseThrow(() -> new ProductNotFoundInHospitalStockException());
+		return this.getProductItem(product).orElseThrow(() -> new ProductNotFoundInHospitalStockException());
 	}
 
 	public Long getId() {
@@ -127,4 +118,30 @@ public class Hospital {
 		hospital.address = dto.getAddress();
 		return hospital;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Hospital other = (Hospital) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
 }
