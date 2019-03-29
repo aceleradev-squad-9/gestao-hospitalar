@@ -66,16 +66,10 @@ public class HospitalStockController {
 	public ProductItemDto orderProduct(@PathVariable("hospitalId") Long hospitalId,
 			@PathVariable("productId") Long productId, @RequestBody @Valid ProductItemDto productItemDto) {
 
-		Hospital hospital = this.hospitalService.findById(hospitalId);
 		Product product = this.productService.findById(productId);
 
-		Hospital nearestHospital = this.hospitalService.findNearestHospital(hospital);
-
-		nearestHospital.reduceStock(product, productItemDto.getAmount());
-
-		ProductItem productItem = hospital.addProductInStock(product, productItemDto.getAmount());
-
-		hospitalService.save(hospital);
+		ProductItem productItem = this.hospitalService.orderProductFromNearestHospitals(hospitalId, product,
+				productItemDto.getAmount());
 
 		return productItem.convertToDto();
 
