@@ -3,8 +3,12 @@ package gestao.service.hospital;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -215,5 +219,64 @@ public class HospitalServiceTest {
       HospitalNotFoundException.class, 
       () -> hospitalService.findById(NOT_EXISTING_ID)
     );
+  }
+
+  @Test
+  @DisplayName("Deve retornar uma lista com os hospitais recebidos de HospitalRepository")
+  public void shouldReturnAListWithAllHospitalsUsingHospitalRepository(){
+    final HospitalDto hospitalDto1 = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        34.234,
+        12.121
+      )  
+    );
+
+    final HospitalDto hospitalDto2 = new HospitalDto(
+      "Hospital 2", 
+      "Descrição do hospital 2", 
+      121, 
+      new Address(
+        2L,
+        "Rua do Hospital 2",
+        "Cidade do hospital 2",
+        "Bairro do hospital 2",
+        "Estado do hospital 2",
+        "23456789",
+        "41D",
+        11.234,
+        13.121
+      )  
+    );
+
+    final List<Hospital> allHospitals = Arrays.asList(
+      Hospital.createFromDto(hospitalDto1),
+      Hospital.createFromDto(hospitalDto2)
+    );
+
+    when(mockedHospitalRepository.findAll()).thenReturn(allHospitals);
+
+    final List<Hospital> allHospitalsFromHospitalService = hospitalService.findAll();
+
+    verify(mockedHospitalRepository, times(1)).findAll();
+    
+    assertEquals(allHospitalsFromHospitalService, allHospitals);
+    assertEquals(allHospitalsFromHospitalService.size(), allHospitals.size());
+    
+    for(int i = 0; i < allHospitals.size(); i++){
+      assertEquals(
+        allHospitalsFromHospitalService.get(i),
+        allHospitals.get(i)
+      );
+    }
   }
 }
