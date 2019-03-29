@@ -53,10 +53,14 @@ public class ProductItem extends BaseEntity {
 		return product;
 	}
 
+	public Boolean ableToReduce(Integer amount, Integer minAmount){
+		return amount != null && ((this.amount - amount) > minAmount);
+	}
+
 	public Boolean reduceAmount(Integer amount, Integer minAmount) {
 
 		Boolean hasReduced = Boolean.FALSE;
-		if (amount != null && ((this.amount - amount) > minAmount)) {
+		if (this.ableToReduce(amount, minAmount)) {
 			this.amount -= amount;
 			hasReduced = Boolean.TRUE;
 		}
