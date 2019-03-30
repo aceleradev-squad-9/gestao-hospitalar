@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import gestao.exception.hospital.HospitalNotFoundException;
+import gestao.helper.hospital.HospitalHelper;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
@@ -29,7 +32,10 @@ import gestao.repository.hospital.HospitalRepository;
 public class HospitalServiceTest {
 
   @MockBean
-  HospitalRepository mockedHospitalRepository;
+  private HospitalRepository mockedHospitalRepository;
+
+  @MockBean
+  private HospitalGeoService mockedHospitalGeoService;
 
   @InjectMocks
   @Autowired
@@ -470,6 +476,40 @@ public class HospitalServiceTest {
     assertThrows(
       HospitalNotFoundException.class,
       () -> hospitalService.update(NOT_EXISTING_ID, hospitalDto1)
+    );
+  }
+
+  @Test
+  @DisplayName("Buscar uma lista de hospitais ordenados pela distância para um hospital H em específico.")
+  public void shouldReturnAListOfHospitalsSortedByTheirDistanceToAnSpecificHospital(){
+    final List<Hospital> hospitals = new ArrayList<>();
+
+    final Long ID_FROM_HOSPITAL_TO_BE_MEASURED_THE_DISTANCE_FROM = 4L;
+    final Hospital hospital = HospitalHelper.getAHospitalWithValidProperties(
+      ID_FROM_HOSPITAL_TO_BE_MEASURED_THE_DISTANCE_FROM
+    );
+
+    when(
+      mockedHospitalRepository.findAllByIdNot(ID_FROM_HOSPITAL_TO_BE_MEASURED_THE_DISTANCE_FROM)
+    ).thenReturn(hospitals);
+
+    final List<Hospital> fakeHospitalList = new ArrayList<>();
+    when(
+      mockedHospitalGeoService.findNearestHospitals(hospitals, hospital.getAddress())
+    ).thenReturn(fakeHospitalList);
+
+    assertEquals(
+      fakeHospitalList,
+      hospitalService.findNearestHospitals(
+        hospital
+      )
+    );
+
+    assertEquals(
+      fakeHospitalList,
+      hospitalService.findNearestHospitals(
+        hospital.getAddress()
+      )
     );
   }
 }
