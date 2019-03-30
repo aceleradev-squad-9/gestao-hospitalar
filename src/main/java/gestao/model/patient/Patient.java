@@ -31,6 +31,10 @@ public class Patient {
 
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Hospital hospital;
+	
+	Patient() {
+
+	}
 
 	Patient(Person person, LocalDateTime timeCheckIn, LocalDateTime timeCheckOut, Hospital hospital) {
 		this.person = person;
