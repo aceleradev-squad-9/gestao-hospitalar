@@ -448,6 +448,33 @@ public class HospitalServiceTest {
   }
 
   @Test
+  @DisplayName("Deve jogar HospitalNotFoundException somente quando o repositório não encontra um hospital")
+  public void shouldThrowHospitalNotFoundExceptionOnlyWhenTheRepositoryDoesNotFindAHospital(){
+    final Long NOT_EXISTING_ID = 1L;
+    when(mockedHospitalRepository.findById(NOT_EXISTING_ID))
+      .thenThrow(new HospitalNotFoundException());
+
+    assertThrows(
+      HospitalNotFoundException.class, 
+      () -> hospitalService.verifyIfExistsById(NOT_EXISTING_ID)
+    );
+
+    final Long EXISTING_ID = 2L;
+    when(mockedHospitalRepository.findById(EXISTING_ID))
+      .thenReturn(
+        Optional.of(
+          HospitalHelper.getAHospitalWithValidProperties(EXISTING_ID)
+        )
+      );
+
+    assertDoesNotThrow(
+      () -> {
+        hospitalService.verifyIfExistsById(EXISTING_ID);
+      }
+    );
+  }
+
+  @Test
   @DisplayName("Deve jogar HospitalNotFoundException quando o repositório não encontra o hospital")
   public void shouldThrowHospitalNotFoundExceptionWhenThereisNoHospitalToBeUpdated(){
     final Long NOT_EXISTING_ID = 1L;
