@@ -1,6 +1,7 @@
 package gestao.model.bloodbank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class BloodBank {
@@ -10,6 +11,7 @@ public class BloodBank {
 	private Long id;
 
 	@Column
+	@NotNull(message = "O tipo sanguíneo não foi informado.")
 	private BloodType bloodType;
 
 
