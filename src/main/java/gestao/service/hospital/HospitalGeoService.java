@@ -44,8 +44,9 @@ public class HospitalGeoService {
 
 	private String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
 		
-		return hospitals.stream().map((hospital) -> hospital.getAddress()
-				.getFormattedAddress()).toArray(String[]::new);
+		return hospitals.stream()
+			.map(hospital -> hospital.getAddress().getFormattedAddress())
+			.toArray(String[]::new);
 	}
 
 
