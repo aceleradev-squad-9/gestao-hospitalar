@@ -58,22 +58,11 @@ public class HospitalGeoService {
 		}
 
 		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
-
 		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
 
     return IntStream.range(0, hospitals.size())
       .boxed()
-      .sorted((a, b) -> {
-        if (arrayOfDistances.get(a) < arrayOfDistances.get(b)) {
-          return -1;
-        }
-
-        if (arrayOfDistances.get(a) > arrayOfDistances.get(b)) {
-          return 1;
-        }
-
-        return 0;
-      })
+      .sorted(Comparator.comparing(arrayOfDistances::get))
       .<Hospital>map(i -> arrayOfHospitals.get(i))
       .collect(Collectors.toList());
 	}
