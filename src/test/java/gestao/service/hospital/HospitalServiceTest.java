@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -325,6 +325,151 @@ public class HospitalServiceTest {
     assertThrows(
       HospitalNotFoundException.class, 
       () -> hospitalService.delete(NOT_EXISTING_ID)
+    );
+  }
+
+  @Test
+  @DisplayName("Deve retornar um hospital atualizado com as informações do HospitalDto")
+  public void shouldReturnAnUpdatedHospitalWithTheHospitalDtoInfo(){
+    final HospitalDto hospitalDto1 = new HospitalDto(
+      "Hospital 12", 
+      "Descrição do hospital 12", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 12",
+        "Cidade do hospital 12",
+        "Bairro do hospital 12",
+        "Estado do hospital 12",
+        "12345",
+        "2D",
+        0.,
+        12.121
+      )  
+    );
+
+    final Long HOSPITAL_TO_BE_UPDATED_ID = 1L;
+    Hospital hospitalToBeUpdated = Hospital.createFromDto(hospitalDto1);
+    when(mockedHospitalRepository.findById(HOSPITAL_TO_BE_UPDATED_ID)).thenReturn(
+      Optional.of(hospitalToBeUpdated)
+    );
+
+    when(mockedHospitalRepository.save(hospitalToBeUpdated)).thenReturn(
+      hospitalToBeUpdated
+    );
+
+    final HospitalDto hospitalDtoWithInfoToUpdate = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        12.123,
+        12.121
+      )  
+    );
+    Hospital updatedHospital = hospitalService.update(
+      HOSPITAL_TO_BE_UPDATED_ID, 
+      hospitalDtoWithInfoToUpdate
+    );
+
+    verify(mockedHospitalRepository, times(1)).findById(HOSPITAL_TO_BE_UPDATED_ID);
+    verify(mockedHospitalRepository, times(1)).save(hospitalToBeUpdated);
+
+    assertEquals(
+      hospitalDtoWithInfoToUpdate.getName(),
+      updatedHospital.getName()
+    );
+
+    assertEquals(
+      hospitalDtoWithInfoToUpdate.getDescription(),
+      updatedHospital.getDescription()
+    );
+
+    assertEquals(
+      hospitalDtoWithInfoToUpdate.getMaximumNumberOfBeds(),
+      updatedHospital.getMaximumNumberOfBeds()
+    );
+
+    final Address updatedAddress = updatedHospital.getAddress();
+    final Address addressWithInfoToUpdate = hospitalDtoWithInfoToUpdate.getAddress();
+
+    assertEquals(
+      addressWithInfoToUpdate.getStreet(),
+      updatedAddress.getStreet()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getDistrict(),
+      updatedAddress.getDistrict()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getCity(),
+      updatedAddress.getCity()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getState(),
+      updatedAddress.getState()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getCep(),
+      updatedAddress.getCep()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getNumber(),
+      updatedAddress.getNumber()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getLatitude(),
+      updatedAddress.getLatitude()
+    );
+
+    assertEquals(
+      addressWithInfoToUpdate.getLongitude(),
+      updatedAddress.getLongitude()
+    );
+  }
+
+  @Test
+  @DisplayName("Deve jogar HospitalNotFoundException quando o repositório não encontra o hospital")
+  public void shouldThrowHospitalNotFoundExceptionWhenThereisNoHospitalToBeUpdated(){
+    final Long NOT_EXISTING_ID = 1L;
+
+    when(mockedHospitalRepository.findById(NOT_EXISTING_ID)).thenThrow(
+      new HospitalNotFoundException()
+    );
+    
+    final HospitalDto hospitalDto1 = new HospitalDto(
+      "Hospital 12", 
+      "Descrição do hospital 12", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 12",
+        "Cidade do hospital 12",
+        "Bairro do hospital 12",
+        "Estado do hospital 12",
+        "12345",
+        "2D",
+        0.,
+        12.121
+      )  
+    );
+
+    assertThrows(
+      HospitalNotFoundException.class,
+      () -> hospitalService.update(NOT_EXISTING_ID, hospitalDto1)
     );
   }
 }

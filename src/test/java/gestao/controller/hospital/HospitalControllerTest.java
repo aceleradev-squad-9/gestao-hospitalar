@@ -394,4 +394,77 @@ public class HospitalControllerTest {
 
     verify(mockedHospitalService, times(1)).delete(NOT_EXISTING_ID);
   }
+
+  @Test
+  @DisplayName("Deve receber http status code 201 e um hospital atualizado após utilizar HospitalService.update")
+  public void shouldReceiveHttpStatusCode201AndAnUpdatedHospital() throws Exception{
+    final HospitalDto hospitalDto = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        34.234,
+        12.121
+      )  
+    );
+    final Long HOSPITAL_TO_BE_UPDATED_ID = 1L;
+    Hospital updatedHospital = Hospital.createFromDto(hospitalDto);
+    when(
+      mockedHospitalService.update(eq(HOSPITAL_TO_BE_UPDATED_ID),isA(HospitalDto.class))
+    ).thenReturn(updatedHospital);
+
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
+    MvcResult mvcResult = mvc.perform(
+      put("/hospital/" + HOSPITAL_TO_BE_UPDATED_ID)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(hospitalDtoJson)
+        .accept(MediaType.APPLICATION_JSON)
+    ) 
+    .andExpect(status().isOk())
+    .andReturn();    
+    
+    final String hospitalJson = objectMapper.writeValueAsString(updatedHospital);
+    assertEquals(
+      hospitalJson,
+      mvcResult.getResponse().getContentAsString()
+    );
+  }
+
+  @Test
+  @DisplayName("Deve enviar o DTO correto para HospitalService.udpate")
+  public void shouldSendTheCorrectDtoToHospitalServiceUpdate(){
+    final HospitalDto hospitalDto = new HospitalDto(
+      "Hospital 1", 
+      "Descrição do hospital 1", 
+      123, 
+      new Address(
+        1L,
+        "Rua do Hospital 1",
+        "Cidade do hospital 1",
+        "Bairro do hospital 1",
+        "Estado do hospital 1",
+        "12345678",
+        "23D",
+        34.234,
+        12.121
+      )  
+    );
+    final Long HOSPITAL_TO_BE_UPDATED_ID = 1L;
+    Hospital updatedHospital = Hospital.createFromDto(hospitalDto);
+    when(
+      mockedHospitalService.update(HOSPITAL_TO_BE_UPDATED_ID,hospitalDto)
+    ).thenReturn(updatedHospital);
+
+    hospitalController.updateHospital(HOSPITAL_TO_BE_UPDATED_ID, hospitalDto);
+
+    verify(mockedHospitalService, times(1)).update(HOSPITAL_TO_BE_UPDATED_ID, hospitalDto);
+  }
 }
