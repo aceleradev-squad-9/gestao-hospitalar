@@ -2,10 +2,7 @@ package gestao.model.product.bloodbank;
 
 import gestao.model.product.Product;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class BloodBank extends Product {
@@ -14,10 +11,12 @@ public class BloodBank extends Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String type;
+	@Column
+	private BloodType bloodType;
 
-	public BloodBank(String name, String description, String type) {
+
+	public BloodBank(String name, String description, BloodType bloodType) {
 		super(name, description);
-		this.type = type;
+		this.bloodType = bloodType;
 	}
 }

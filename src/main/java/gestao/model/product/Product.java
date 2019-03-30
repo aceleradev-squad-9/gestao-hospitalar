@@ -1,9 +1,6 @@
 package gestao.model.product;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -13,6 +10,7 @@ import gestao.model.BaseEntity;
 @Entity
 @SQLDelete(sql = "UPDATE Product SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Product extends BaseEntity {
 
 	@Id
@@ -23,9 +21,6 @@ public class Product extends BaseEntity {
 
 	private String description;
 
-	Product() {
-
-	}
 
 	public Product(String name, String description) {
 		this.name = name;
