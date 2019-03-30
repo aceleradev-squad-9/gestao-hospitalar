@@ -478,6 +478,9 @@ public class HospitalServiceTest {
       () -> hospitalService.update(NOT_EXISTING_ID, hospitalDto1)
     );
   }
+<<<<<<< HEAD
+}
+=======
 
   @Test
   @DisplayName("Buscar uma lista de hospitais ordenados pela distância para um hospital H em específico.")
@@ -513,3 +516,4 @@ public class HospitalServiceTest {
     );
   }
 }
+>>>>>>> a4ed06f96d22942e9b8c0ba7a3b0e379776fd02e
