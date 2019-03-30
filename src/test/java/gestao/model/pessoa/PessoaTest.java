@@ -1,4 +1,4 @@
-package gestao.pessoa;
+package gestao.model.pessoa;
 
 public class PessoaTest {
 
