@@ -10,15 +10,16 @@ import gestao.model.BaseEntity;
 @Entity
 @SQLDelete(sql = "UPDATE Product SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column
 	private String name;
 
+	@Column
 	private String description;
 
 

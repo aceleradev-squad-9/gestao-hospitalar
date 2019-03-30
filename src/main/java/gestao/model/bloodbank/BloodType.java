@@ -1,6 +1,4 @@
-package gestao.model.product.bloodbank;
-
-import com.fasterxml.jackson.annotation.JsonValue;
+package gestao.model.bloodbank;
 
 import java.util.function.Supplier;
 
