@@ -1,6 +1,8 @@
 package gestao.controller.hospital;
 
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+
 import static org.mockito.Mockito.*;
 
 import static org.hamcrest.Matchers.is;
@@ -36,7 +38,7 @@ public class HospitalControllerTest {
   @Autowired
   private MockMvc mvc;
 
-  @MockBean(name="hospitalService")
+  @MockBean
   private HospitalService mockedHospitalService;
 
   @InjectMocks
@@ -262,10 +264,11 @@ public class HospitalControllerTest {
     );
 
     final Hospital hospital = Hospital.createFromDto(hospitalDto);
-    when(mockedHospitalService.findById(1L)).thenReturn(hospital);
+    final Long HOSPITAL_ID = 1L;
+    when(mockedHospitalService.findById(HOSPITAL_ID)).thenReturn(hospital);
 
     MvcResult result = mvc.perform(
-      get("/hospital/1")
+      get("/hospital/" + HOSPITAL_ID)
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
     )
@@ -361,5 +364,34 @@ public class HospitalControllerTest {
       allHospitalsFromHospitalController,
       allHospitals
     );
+  }
+
+  @Test
+  @DisplayName("Deve receber http status code 204 quando recebe um request para remover um hospital com id existente")
+  public void shouldReceiveHttpStatusCode204AfterDeletingAnExistingHospital() throws Exception{
+    final Long EXISTING_ID = 1L;
+
+    mvc.perform(
+      delete("/hospital/" + EXISTING_ID).accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isNoContent());
+
+    verify(mockedHospitalService, times(1)).delete(EXISTING_ID);
+  }
+
+  @Test
+  @DisplayName("Deve receber http status code 404 após tentar remover um hospital inexistente.")
+  public void shouldReceiveHttpStatusCode404AfterTryingToDelete() throws Exception {
+    final Long NOT_EXISTING_ID = 11111L;
+
+    Mockito.doThrow(new HospitalNotFoundException()).when(mockedHospitalService).delete(NOT_EXISTING_ID);
+
+    mvc.perform(
+      delete("/hospital/" + NOT_EXISTING_ID).accept(MediaType.APPLICATION_JSON)
+    )
+    .andExpect(status().isNotFound())
+    .andReturn();
+
+    verify(mockedHospitalService, times(1)).delete(NOT_EXISTING_ID);
   }
 }
