@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import gestao.model.hospital.Hospital;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 import gestao.model.product.ProductItemDto;
@@ -37,12 +36,10 @@ public class HospitalStockController {
 	public ProductItemDto addProductInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
 			@RequestBody @Valid ProductItemDto productItemDto) {
 
-		Hospital hospital = hospitalService.findById(hospitalId);
 		Product product = this.productService.findById(productId);
 
-		ProductItem productItem = hospital.addProductInStock(product, productItemDto.getAmount());
-
-		hospitalService.save(hospital);
+		ProductItem productItem = this.hospitalService.addProductInStock(hospitalId, product,
+				productItemDto.getAmount());
 
 		return productItem.convertToDto();
 	}
@@ -55,11 +52,8 @@ public class HospitalStockController {
 
 	@GetMapping("/{productId}")
 	public ProductItemDto findStockProduct(@PathVariable Long hospitalId, @PathVariable Long productId) {
-
-		Hospital hospital = hospitalService.findById(hospitalId);
 		Product product = productService.findById(productId);
-
-		return hospital.findProductInStock(product).convertToDto();
+		return hospitalService.findProductInStock(hospitalId, product).convertToDto();
 	}
 
 	@PutMapping("/order/{productId}")

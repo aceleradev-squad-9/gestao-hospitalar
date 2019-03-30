@@ -27,7 +27,7 @@ public class Product extends BaseEntity {
 
 	}
 
-	public Product(String name, String description) {
+	Product(String name, String description) {
 		this.name = name;
 		this.description = description;
 	}
@@ -42,6 +42,30 @@ public class Product extends BaseEntity {
 
 	public String getName() {
 		return name;
+	}
+
+	public static ProductBuilder builder() {
+		return new ProductBuilder();
+	}
+
+	public static class ProductBuilder {
+		private String name;
+
+		private String description;
+
+		public ProductBuilder withName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public ProductBuilder withDescription(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Product build() {
+			return new Product(name, description);
+		}
 	}
 
 	@Override

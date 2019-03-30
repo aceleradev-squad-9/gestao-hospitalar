@@ -9,8 +9,8 @@ public class ProductItemDto {
 
 	private String description;
 
-	@NotNull(message="Informe a quantidade do produto.")
-	@Min(value = 1)
+	@NotNull(message = "Informe a quantidade do produto")
+	@Min(value = 1, message="A quantidade do produto deve ser maior que 0")
 	private Integer amount;
 
 	public Integer getAmount() {

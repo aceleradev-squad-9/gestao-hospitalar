@@ -1,5 +1,7 @@
 package gestao.service.hospital;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,22 @@ public class HospitalService {
 		Hospital hospital = this.findById(hospitalId);
 		hospital.updateFromDto(hospitalDto);
 		return hospitalRepository.save(hospital);
+	}
+
+	public ProductItem addProductInStock(Long hospitalId, Product product, Integer amount) {
+
+		Hospital hospital = this.findById(hospitalId);
+		
+		ProductItem productItem = hospital.addProductInStock(product, amount);
+
+		this.save(hospital);
+
+		return productItem;
+	}
+	
+	public ProductItem findProductInStock(Long hospitalId, Product product) {
+		Hospital hospital = this.findById(hospitalId);
+		return hospital.findProductInStock(product);
 	}
 
 	public ProductItem orderProductFromNearestHospitals(Long hospitalId, Product product, Integer amount) {
