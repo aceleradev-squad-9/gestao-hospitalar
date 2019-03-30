@@ -34,7 +34,7 @@ public class HospitalGeoService {
 		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 
-	private List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
+	public List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
 		return IntStream.range(0, distances.size()).boxed()
       .map((i) -> new AbstractMap.SimpleEntry<>(hospitals.get(i), distances.get(i)))
       .sorted(Comparator.comparing(AbstractMap.SimpleEntry::getValue))
@@ -42,15 +42,14 @@ public class HospitalGeoService {
       .collect(Collectors.toList());
 	}
 
-	private String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
-		
+	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
 		return hospitals.stream()
 			.map(hospital -> hospital.getAddress().getFormattedAddress())
 			.toArray(String[]::new);
 	}
 
 
-	private List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
+	public List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
 		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(),
 				this.getHospitalsFormattedAddresses(hospitals));
 
