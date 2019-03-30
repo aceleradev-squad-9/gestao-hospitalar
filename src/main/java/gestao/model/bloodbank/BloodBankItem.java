@@ -28,7 +28,7 @@ public class BloodBankItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Hospital hospital;
 
-    public BloodBankItem(Integer amount, LocalDateTime dateDonation, BloodBank bloodBank, Hospital hospital) {
+    BloodBankItem(Integer amount, LocalDateTime dateDonation, BloodBank bloodBank, Hospital hospital) {
         this.amount = amount;
         this.dateDonation = dateDonation;
         this.bloodBank = bloodBank;
@@ -53,5 +53,44 @@ public class BloodBankItem extends BaseEntity {
 
     public Hospital getHospital() {
         return hospital;
+    }
+
+    public static class BloodBankItemBuilder {
+
+        private Integer amount;
+
+        private LocalDateTime dateDonation;
+
+        private BloodBank bloodBank;
+
+        private Hospital hospital;
+
+        public BloodBankItemBuilder withAmount(Integer amount) {
+            this.amount = amount;
+            return this;
+        }
+
+        public BloodBankItemBuilder withDateDonation(LocalDateTime dateDonation) {
+            this.dateDonation = dateDonation;
+            return this;
+        }
+
+        public BloodBankItemBuilder withBloodBank(BloodBank bloodBank) {
+            this.bloodBank = bloodBank;
+            return this;
+        }
+
+        public BloodBankItemBuilder withHospital(Hospital hospital) {
+            this.hospital = hospital;
+            return this;
+        }
+
+        public BloodBankItem build() {
+            return new BloodBankItem(amount, dateDonation, bloodBank, hospital);
+        }
+    }
+
+    public static BloodBankItemBuilder builder() {
+        return new BloodBankItemBuilder();
     }
 }
