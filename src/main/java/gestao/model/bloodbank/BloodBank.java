@@ -12,6 +12,10 @@ public class BloodBank {
 	@Column
 	private BloodType bloodType;
 
+
+	BloodBank() {
+	}
+
 	public BloodBank(BloodType bloodType) {
 		this.bloodType = bloodType;
 	}
