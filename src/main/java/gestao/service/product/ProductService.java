@@ -74,12 +74,13 @@ public class ProductService {
 	 * Método responsável por atualizar um produto. Caso o produto não seja
 	 * encontrado, o método lança um {@link ProductNotFoundException}.
 	 * 
+	 * @param id - {@link Long}
 	 * @param product - {@link Product}
 	 * @return produto atualizado - {@link Product}
 	 */
-	public Product update(Product product) {
+	public Product update(Long id, Product product) {
 
-		if (!this.existsById(product.getId())) {
+		if (!this.existsById(id)) {
 			throw new ProductNotFoundException();
 		}
 
