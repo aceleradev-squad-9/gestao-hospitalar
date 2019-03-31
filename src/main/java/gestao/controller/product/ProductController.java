@@ -46,9 +46,9 @@ public class ProductController {
 		return this.service.findById(id);
 	}
 
-	@PutMapping
-	public Product update(@RequestBody @Valid Product product) {
-		return this.service.update(product);
+	@PutMapping("/{id}")
+	public Product update(@PathVariable Long id, @RequestBody @Valid Product product) {
+		return this.service.update(id, product);
 	}
 
 	@DeleteMapping("/{id}")

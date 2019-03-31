@@ -1,6 +1,11 @@
 package gestao.model.product;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -17,12 +22,17 @@ public class Product extends BaseEntity {
 	private Long id;
 
 	@Column
+	@NotBlank(message="O produto deve possuir um nome.")
 	private String name;
 
 	@Column
+	@NotBlank(message="O produto deve possuir uma descrição.")
 	private String description;
 
-
+	Product() {
+		
+	}
+	
 	Product(Long id, String name, String description) {
 		this.id = id;
 		this.name = name;
