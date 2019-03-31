@@ -7,12 +7,15 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +23,7 @@ import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 import gestao.model.product.ProductItemDto;
 import gestao.service.hospital.HospitalService;
+import gestao.service.product.ProductItemService;
 import gestao.service.product.ProductService;
 
 @RestController
@@ -30,6 +34,9 @@ public class HospitalStockController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private ProductItemService productItemService;
 
 	@PutMapping("/{productId}")
 	@ResponseStatus(code = HttpStatus.CREATED)
@@ -44,14 +51,17 @@ public class HospitalStockController {
 		return productItem.convertToDto();
 	}
 
-	@GetMapping("")
-	public List<ProductItemDto> findStockProducts(@PathVariable Long hospitalId) {
-		return hospitalService
-			.findById(hospitalId)
-			.getStock()
-			.stream()
-			.map(ProductItem::convertToDto)
-			.collect(toList());
+	@GetMapping(params = {"page", "size"})
+	public Page<ProductItemDto> findStockProducts(
+		@RequestParam int page,
+		@RequestParam int size,
+		@PathVariable Long hospitalId
+	) {
+		this.hospitalService.verifyIfExistsById(hospitalId);
+		return this.productItemService.findAllHospitalProductItems(
+			hospitalId, 
+			PageRequest.of(page, size)
+		);
 	}
 
 	@GetMapping("/{productId}")
