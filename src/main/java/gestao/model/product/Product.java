@@ -50,6 +50,11 @@ public class Product extends BaseEntity {
 	public String getName() {
 		return name;
 	}
+	
+	public void update(Product product) {
+		this.name = product.getName();
+		this.description = product.getDescription();
+	}
 
 	public static ProductBuilder builder() {
 		return new ProductBuilder();

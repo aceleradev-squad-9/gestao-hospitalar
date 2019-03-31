@@ -132,7 +132,7 @@ public class ProductControllerTest {
 
 	@Test
 	@DisplayName("Deve receber o http status 404 e lançar a exceção ProductNotFoundException ao buscar um produto não cadastrado.")
-	public void shouldThrowsProductNotFoundExceptionInProductSearch() throws Exception {
+	public void shouldThrowProductNotFoundExceptionInProductSearch() throws Exception {
 
 		Long productId = 1L;
 
@@ -173,7 +173,7 @@ public class ProductControllerTest {
 	
 	@Test
 	@DisplayName("Deve receber o http status 404 e lançar a exceção ProductNotFoundException ao tentar atualizar um produto não cadastrado")
-	public void shouldThrowsProductNotFoundExceptionInProductUpdate() throws Exception {
+	public void shouldThrowProductNotFoundExceptionInProductUpdate() throws Exception {
 
 		Long productId = 1L;
 
@@ -231,7 +231,7 @@ public class ProductControllerTest {
 	
 	@Test
 	@DisplayName(" Deve receber o http status 404 e lançar a exceção ProductNotFoundException ao tentar remover um produto não cadastrado")
-	public void shouldThrowsProductNotFoundExceptionInProductDelete() throws Exception {
+	public void shouldThrowProductNotFoundExceptionInProductDelete() throws Exception {
 
 		Long productId = 1L;
 
