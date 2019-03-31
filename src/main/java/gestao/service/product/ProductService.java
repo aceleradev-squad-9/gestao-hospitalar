@@ -1,6 +1,7 @@
 package gestao.service.product;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,32 +60,21 @@ public class ProductService {
 	}
 
 	/**
-	 * Método responsável por verificar se um produto existe utilizando o seu
-	 * identificador único.
-	 * 
-	 * @param id - {@link Long}
-	 * @return retorna true, caso o produto exista e false, caso não exista. -
-	 *         {@link Boolean}
-	 */
-	private Boolean existsById(Long id) {
-		return this.productRepository.existsById(id);
-	}
-
-	/**
 	 * Método responsável por atualizar um produto. Caso o produto não seja
 	 * encontrado, o método lança um {@link ProductNotFoundException}.
 	 * 
-	 * @param id - {@link Long}
-	 * @param product - {@link Product}
+	 * @param id      - {@link Long}
+	 * @param productWithInfoToUpdate - {@link Product}
 	 * @return produto atualizado - {@link Product}
 	 */
-	public Product update(Long id, Product product) {
+	public Product update(Long id, Product productWithInfoToUpdate) {
 
-		if (!this.existsById(id)) {
-			throw new ProductNotFoundException();
-		}
-
-		return this.productRepository.save(product);
+		Product updatedProduct = this.findById(id);
+		
+		Optional.ofNullable(productWithInfoToUpdate).ifPresent(
+				(product)->updatedProduct.update(product));
+		
+		return this.productRepository.save(updatedProduct);
 	}
 
 	/**
@@ -97,7 +87,7 @@ public class ProductService {
 	@Transactional
 	public void delete(Long id) {
 		Product product = this.findById(id);
-		this.productRepository.delete(product);
 		this.productItemRepository.deleteAllByProduct(product);
+		this.productRepository.delete(product);
 	}
 }
