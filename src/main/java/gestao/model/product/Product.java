@@ -27,7 +27,8 @@ public class Product extends BaseEntity {
 
 	}
 
-	Product(String name, String description) {
+	Product(Long id, String name, String description) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 	}
@@ -49,6 +50,8 @@ public class Product extends BaseEntity {
 	}
 
 	public static class ProductBuilder {
+		private Long id;
+
 		private String name;
 
 		private String description;
@@ -63,8 +66,13 @@ public class Product extends BaseEntity {
 			return this;
 		}
 
+		public ProductBuilder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
 		public Product build() {
-			return new Product(name, description);
+			return new Product(id, name, description);
 		}
 	}
 
