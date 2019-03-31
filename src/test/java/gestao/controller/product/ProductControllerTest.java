@@ -1,6 +1,7 @@
 package gestao.controller.product;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,6 +16,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -83,16 +87,24 @@ public class ProductControllerTest {
 	public void shouldReceiveAllProducts() throws Exception {
 
 		List<Product> productList = Arrays.asList(
-				Product.builder().withName("Produto A").withDescription("Descrição").build(),
-				Product.builder().withName("Produto B").withDescription("Descrição").build());
+			Product.builder().withName("Produto A").withDescription("Descrição").build(),
+			Product.builder().withName("Produto B").withDescription("Descrição").build()
+		);
 
-		Mockito.when(productService.find()).thenReturn(productList);
+		Page<Product> productListPage = new PageImpl<>(productList);
+		Mockito.when(
+			productService.find(isA(PageRequest.class))
+		).thenReturn(productListPage);
 
 		ObjectMapper objectMapper = new ObjectMapper();
-		String productListJson = objectMapper.writeValueAsString(productList);
+		String productListJson = objectMapper.writeValueAsString(productListPage);
 
-		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/product").contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
+			.get("/product?page=0&size=" + productList.size())
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
 
 		assertEquals(productListJson, mvcResult.getResponse().getContentAsString());
 	}
