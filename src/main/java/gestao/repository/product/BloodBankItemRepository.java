@@ -1,6 +1,6 @@
-package gestao.repository.bloodbank;
+package gestao.repository.product;
 
-import gestao.model.bloodbank.BloodBankItem;
+import gestao.model.product.BloodBankItem;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
