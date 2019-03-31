@@ -22,12 +22,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.awt.print.Pageable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -350,7 +344,7 @@ public class HospitalControllerTest {
       Hospital.createFromDto(hospitalDto2)
     );
 
-    Page<Hospital> hospitalPage = new PageImpl<Hospital>(allHospitals);
+    Page<Hospital> hospitalPage = new PageImpl<>(allHospitals);
     when(
       mockedHospitalService.findAll(isA(PageRequest.class))
     ).thenReturn(hospitalPage);
