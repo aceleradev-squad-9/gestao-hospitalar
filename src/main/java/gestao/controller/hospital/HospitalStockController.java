@@ -46,8 +46,12 @@ public class HospitalStockController {
 
 	@GetMapping("")
 	public List<ProductItemDto> findStockProducts(@PathVariable Long hospitalId) {
-		return hospitalService.findById(hospitalId).getStock().stream().map(ProductItem::convertToDto)
-				.collect(toList());
+		return hospitalService
+			.findById(hospitalId)
+			.getStock()
+			.stream()
+			.map(ProductItem::convertToDto)
+			.collect(toList());
 	}
 
 	@GetMapping("/{productId}")
