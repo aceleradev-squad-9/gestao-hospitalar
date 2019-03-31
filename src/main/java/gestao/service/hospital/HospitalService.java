@@ -3,6 +3,8 @@ package gestao.service.hospital;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.hospital.HospitalNotFoundException;
@@ -40,7 +42,11 @@ public class HospitalService {
 		this.findById(id);
 	}
 
-	public List<Hospital> findAll() {
+	public Page<Hospital> findAll(Pageable pageable) {
+		return hospitalRepository.findAll(pageable);
+	}
+
+	public List<Hospital> findAll(){
 		return hospitalRepository.findAll();
 	}
 

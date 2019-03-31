@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,8 +22,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.awt.print.Pageable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -197,7 +203,7 @@ public class HospitalControllerTest {
     );
     final ObjectMapper objectMapper = new ObjectMapper();
     final String hospitalDtoJson = objectMapper.writeValueAsString(hospitalDto);
-    MvcResult r = mvc.perform(
+    mvc.perform(
       post("/hospital")
         .contentType(MediaType.APPLICATION_JSON)
         .content(hospitalDtoJson)
@@ -343,26 +349,35 @@ public class HospitalControllerTest {
       Hospital.createFromDto(hospitalDto1),
       Hospital.createFromDto(hospitalDto2)
     );
-    when(mockedHospitalService.findAll()).thenReturn(allHospitals);
+
+    Page<Hospital> hospitalPage = new PageImpl<Hospital>(allHospitals);
+    when(
+      mockedHospitalService.findAll(isA(PageRequest.class))
+    ).thenReturn(hospitalPage);
 
     MvcResult result = mvc.perform(
-      get("/hospital").accept(MediaType.APPLICATION_JSON)
+      get("/hospital?page=0&size=" + allHospitals.size())
+        .accept(MediaType.APPLICATION_JSON)
     )
     .andExpect(status().isOk())
     .andReturn();
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    final ObjectMapper objectMapper = new ObjectMapper();
+    final String hospitalJson = objectMapper.writeValueAsString(hospitalPage);
     assertEquals(
-      objectMapper.writeValueAsString(allHospitals), 
+      hospitalJson, 
       result.getResponse().getContentAsString()
     );
 
-    final List<Hospital> allHospitalsFromHospitalController = hospitalController.findAll();
+    final Page<Hospital> allHospitalsFromHospitalController = hospitalController.findAll(
+      1,
+      allHospitals.size()
+    );
 
-    verify(mockedHospitalService, times(2)).findAll();
-    assertEquals(
-      allHospitalsFromHospitalController,
-      allHospitals
+    verify(mockedHospitalService, times(2)).findAll(isA(PageRequest.class));
+    assertArrayEquals(
+      allHospitalsFromHospitalController.get().toArray(),
+      allHospitals.stream().toArray()
     );
   }
 
