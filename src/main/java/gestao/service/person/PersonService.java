@@ -1,8 +1,11 @@
 package gestao.service.person;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.person.PersonNotFoundException;
@@ -43,8 +46,8 @@ public class PersonService {
 	 * 
 	 * @return lista de pessoas - {@link List}
 	 */
-	public Iterable<Person> find() {
-		return this.repository.findAll();
+	public Page<Person> find(Pageable page) {		
+		return this.repository.findAll(page);
 	}
 
 	/**
