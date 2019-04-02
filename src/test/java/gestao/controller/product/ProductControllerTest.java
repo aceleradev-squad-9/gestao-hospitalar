@@ -41,7 +41,7 @@ public class ProductControllerTest {
 
 	@InjectMocks
 	@Autowired
-	private ProductController hospitalController;
+	private ProductController productController;
 
 	@Test
 	@DisplayName("Deve receber o body em formato json com as informações do produto criado e também deve receber http status code 201.")
@@ -240,6 +240,8 @@ public class ProductControllerTest {
 		mvc.perform(MockMvcRequestBuilders.delete(String.format("/product/%s", productId))
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound()).andReturn();
+		
+		Mockito.verify(productService, Mockito.times(1)).delete(productId);
 	}
 	
 }

@@ -49,12 +49,12 @@ public class PersonController {
 
 	@GetMapping("/{id}")
 	public Person find(@PathVariable Long id) {
-		return this.service.find(id);
+		return this.service.findById(id);
 	}
 
-	@PutMapping
-	public Person update(@RequestBody @Valid Person person) {
-		return this.service.update(person);
+	@PutMapping("/{id}")
+	public Person update(@PathVariable Long id, @RequestBody @Valid Person person) {
+		return this.service.update(id, person);
 	}
 
 	@DeleteMapping("/{id}")
