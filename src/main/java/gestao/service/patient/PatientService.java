@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gestao.exception.patient.PatientNotFoundException;
 import gestao.model.hospital.Hospital;
 import gestao.model.patient.Patient;
 import gestao.model.person.Person;
@@ -28,7 +29,7 @@ public class PatientService {
 	@Autowired
 	private PatientRepository repository;
 	
-	public Patient create(Long personId, Long hospitalId) {
+	public Patient checkIn(Long personId, Long hospitalId) {
 		Person person = personService.find(personId);
 		Hospital hospital = hospitalService.findById(hospitalId);
 		
@@ -37,6 +38,13 @@ public class PatientService {
 				.withHospital(hospital)
 				.withTimeCheckIn(LocalDateTime.now())
 				.build();
+		
+		return this.repository.save(patient);
+	}
+	
+	public Patient checkOut(Long patientId) {
+		Patient patient = this.repository.findById(patientId).orElseThrow(PatientNotFoundException::new);;
+		patient.setTimeCheckOut(LocalDateTime.now());		
 		
 		return this.repository.save(patient);
 	}

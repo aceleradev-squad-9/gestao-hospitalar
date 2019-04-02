@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import gestao.model.BaseEntity;
 import gestao.model.hospital.Hospital;
 import gestao.model.person.Person;
@@ -35,6 +37,10 @@ public class Patient extends BaseEntity {
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Hospital hospital;
 	
+	Patient() {
+		
+	}
+	
 	Patient(Person person, LocalDateTime timeCheckIn, LocalDateTime timeCheckOut, Hospital hospital) {
 		this.person = person;
 		this.timeCheckIn = timeCheckIn;
@@ -56,6 +62,10 @@ public class Patient extends BaseEntity {
 
 	public LocalDateTime getTimeCheckOut() {
 		return timeCheckOut;
+	}
+	
+	public void setTimeCheckOut(LocalDateTime timeCheckOut) {
+		this.timeCheckOut = timeCheckOut;
 	}
 
 	public Hospital getHospitalId() {
