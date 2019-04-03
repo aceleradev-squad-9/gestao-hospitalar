@@ -80,7 +80,7 @@ public class HospitalStockControllerTest {
 
 		MvcResult mvcResult = mvc.perform(put(String.format("/hospital/%s/stock/%s", hospitalId, productId))
 				.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andReturn();
+				.andExpect(status().isOk()).andReturn();
 
 		assertEquals(productItemDtoJson, mvcResult.getResponse().getContentAsString());
 	}
