@@ -1,7 +1,10 @@
 package gestao.service.hospital;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import gestao.model.bloodbank.BloodBank;
+import gestao.model.product.BloodBankItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +66,17 @@ public class HospitalService {
 		this.save(hospital);
 
 		return productItem;
+	}
+
+	public BloodBankItem addBloodBankInStock(Long hospitalId, Product product, Integer amount, LocalDateTime dateDonation) {
+
+		Hospital hospital = this.findById(hospitalId);
+
+		BloodBankItem bloodBankItem = hospital.addBloodBankInStock(product, amount, dateDonation);
+
+		this.save(hospital);
+
+		return bloodBankItem;
 	}
 	
 	public ProductItem findProductInStock(Long hospitalId, Product product) {

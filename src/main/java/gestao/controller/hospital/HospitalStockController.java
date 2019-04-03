@@ -6,19 +6,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import gestao.model.bloodbank.BloodBank;
+import gestao.model.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import gestao.model.product.Product;
-import gestao.model.product.ProductItem;
-import gestao.model.product.ProductItemDto;
 import gestao.service.hospital.HospitalService;
 import gestao.service.product.ProductService;
 
@@ -42,6 +35,22 @@ public class HospitalStockController {
 				productItemDto.getAmount());
 
 		return productItem.convertToDto();
+	}
+
+	@PostMapping("/bloodbank/{productId}")
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public BloodBankItemDto addBloodBankInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
+											@RequestBody @Valid BloodBankItemDto bloodBankItemDto) {
+
+		System.out.println(bloodBankItemDto);
+		Product product = this.productService.findById(productId);
+
+		BloodBankItem bloodBankItem = this.hospitalService.addBloodBankInStock(hospitalId, product,
+				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation());
+
+//		return productItem.convertToDto();
+//		System.out.println();
+		return bloodBankItem.convertToBloodBankItemDto();
 	}
 
 	@GetMapping("")

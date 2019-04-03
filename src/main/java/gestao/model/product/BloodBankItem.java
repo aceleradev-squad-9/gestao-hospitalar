@@ -1,6 +1,5 @@
 package gestao.model.product;
 
-import gestao.model.bloodbank.BloodBank;
 import gestao.model.hospital.Hospital;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -16,17 +15,12 @@ public class BloodBankItem extends ProductItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column
-//    private Integer amount;
-
     @Column
     private LocalDateTime dateDonation;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private BloodBank bloodBank;
+    BloodBankItem(){
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Hospital hospital;
+    }
 
     public BloodBankItem(Hospital hospital, Product product, Integer amount, LocalDateTime dateDonation) {
         super(hospital, product, amount);
@@ -34,62 +28,38 @@ public class BloodBankItem extends ProductItem {
     }
 
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public Integer getAmount() {
-//        return amount;
-//    }
-//
-//    public LocalDateTime getDateDonation() {
-//        return dateDonation;
-//    }
-//
-//    public BloodBank getBloodBank() {
-//        return bloodBank;
-//    }
-//
-//    public Hospital getHospital() {
-//        return hospital;
-//    }
-//
-//    public static class BloodBankItemBuilder extends ProductItemBuilder {
-//
-//        private Integer amount;
-//
-//        private LocalDateTime dateDonation;
-//
-//        private BloodBank bloodBank;
-//
-//        private Hospital hospital;
-//
-//        public BloodBankItemBuilder withAmount(Integer amount) {
-//            this.amount = amount;
-//            return this;
-//        }
-//
-//        public BloodBankItemBuilder withDateDonation(LocalDateTime dateDonation) {
-//            this.dateDonation = dateDonation;
-//            return this;
-//        }
-//
-//        public BloodBankItemBuilder withBloodBank(BloodBank bloodBank) {
-//            this.bloodBank = bloodBank;
-//            return this;
-//        }
-//
-//        public BloodBankItemBuilder withHospital(Hospital hospital) {
-//            this.hospital = hospital;
-//            return this;
-//        }
-//
-//        public BloodBankItem build() {
-//            return new BloodBankItem(amount, dateDonation, bloodBank, hospital);
-//        }
-//    }
-//
-//    public static BloodBankItemBuilder builder() {
-//        return new BloodBankItemBuilder();
-//    }
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getDateDonation() {
+        return dateDonation;
+    }
+
+    public static class BloodBankItemBuilder extends ProductItemBuilder {
+
+        private LocalDateTime dateDonation;
+
+        public BloodBankItemBuilder withDateDonation(LocalDateTime dateDonation) {
+            this.dateDonation = dateDonation;
+            return this;
+        }
+
+        public BloodBankItem build() {
+            return new BloodBankItem();
+        }
+    }
+
+    public static BloodBankItemBuilder builder() {
+        return new BloodBankItemBuilder();
+    }
+
+    public BloodBankItemDto convertToBloodBankItemDto() {
+
+        BloodBankItemDto bloodBankItemDto = new BloodBankItemDto();
+        bloodBankItemDto.setAmount(this.getAmount());
+        bloodBankItemDto.setDateDonation(this.getDateDonation());
+
+        return bloodBankItemDto;
+    }
 }

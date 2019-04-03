@@ -22,6 +22,9 @@ public class Product extends BaseEntity {
 	@Column
 	private String description;
 
+	Product(){
+
+	}
 
 	Product(Long id, String name, String description) {
 		this.id = id;
