@@ -42,14 +42,11 @@ public class HospitalStockController {
 	public BloodBankItemDto addBloodBankInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
 											@RequestBody @Valid BloodBankItemDto bloodBankItemDto) {
 
-		System.out.println(bloodBankItemDto);
 		Product product = this.productService.findById(productId);
 
 		BloodBankItem bloodBankItem = this.hospitalService.addBloodBankInStock(hospitalId, product,
 				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation());
 
-//		return productItem.convertToDto();
-//		System.out.println();
 		return bloodBankItem.convertToBloodBankItemDto();
 	}
 

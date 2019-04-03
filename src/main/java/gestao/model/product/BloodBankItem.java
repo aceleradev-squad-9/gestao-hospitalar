@@ -19,7 +19,6 @@ public class BloodBankItem extends ProductItem {
     private LocalDateTime dateDonation;
 
     BloodBankItem(){
-
     }
 
     public BloodBankItem(Hospital hospital, Product product, Integer amount, LocalDateTime dateDonation) {
@@ -46,7 +45,7 @@ public class BloodBankItem extends ProductItem {
         }
 
         public BloodBankItem build() {
-            return new BloodBankItem();
+            return new BloodBankItem(super.build().getHospital(), super.build().getProduct(), super.build().getAmount(), dateDonation);
         }
     }
 
