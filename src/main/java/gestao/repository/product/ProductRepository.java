@@ -13,5 +13,7 @@ import gestao.model.product.Product;
  */
 @Repository
 public interface ProductRepository extends PagingAndSortingRepository<Product, Long> {
+	Boolean existsByName(String name);
 
+	Boolean existsByNameAndIdNot(String name, Long id);
 }

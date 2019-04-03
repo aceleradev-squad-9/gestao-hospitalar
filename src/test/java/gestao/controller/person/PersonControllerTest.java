@@ -98,13 +98,14 @@ public class PersonControllerTest {
 		
 		String personJson = objectMapper.writeValueAsString(person);
 
-		mvc.perform(MockMvcRequestBuilders.post("/person")
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/person")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(personJson)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict())
 				.andReturn();
 
+		assertEquals("", mvcResult.getResponse().getContentAsString());
 		Mockito.verify(personService, Mockito.times(1)).create(person);
 	}
 	
@@ -292,13 +293,14 @@ public class PersonControllerTest {
 		
 		String personJson = objectMapper.writeValueAsString(person);
 
-		mvc.perform(MockMvcRequestBuilders.put(String.format("/person/%s", personId))
+		MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.put(String.format("/person/%s", personId))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(personJson)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isConflict())
 				.andReturn();
 
+		assertEquals("", mvcResult.getResponse().getContentAsString());
 		Mockito.verify(personService, Mockito.times(1)).update(personId, person);
 	}
 	

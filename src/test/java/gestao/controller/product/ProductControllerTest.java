@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gestao.exception.product.ProductNotFoundException;
+import gestao.exception.product.ProductsWithSameNameException;
 import gestao.model.product.Product;
 import gestao.service.product.ProductService;
 
@@ -60,6 +61,26 @@ public class ProductControllerTest {
 				.andExpect(status().isCreated()).andReturn();
 
 		assertEquals(productJson, mvcResult.getResponse().getContentAsString());
+	}
+	
+	@Test
+	@DisplayName("Deve receber o http status 409 e lançar uma exceção ao cadastrar um produto com um nome de produto já cadastrado.")
+	public void shouldThrowExceptionWhenCreateProductWithExistingName() throws Exception {
+
+		Product product = Product.builder().withName("Produto A").withDescription("Descrição").build();
+
+		Mockito.when(productService.create(product)).thenThrow(new ProductsWithSameNameException());
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String productJson = objectMapper.writeValueAsString(product);
+
+		MvcResult mvcResult = mvc
+				.perform(MockMvcRequestBuilders.post("/product").contentType(MediaType.APPLICATION_JSON)
+						.content(productJson).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict()).andReturn();
+
+		assertEquals("", mvcResult.getResponse().getContentAsString());
+		Mockito.verify(productService, Mockito.times(1)).create(product);
 	}
 
 	@Test
@@ -169,6 +190,29 @@ public class ProductControllerTest {
 				.andExpect(status().isOk()).andReturn();
 
 		assertEquals(updatedProductJson, mvcResult.getResponse().getContentAsString());
+	}
+	
+	@Test
+	@DisplayName("Deve receber o http status 409 e lançar uma exceção ao atualizar o nome de um produto para um já cadastrado.")
+	public void shouldThrowExceptionWhenUpdateProductToExistingName() throws Exception {
+
+		Long productId = 1L;
+		
+		Product product = Product.builder().withName("Produto A").withDescription("Descrição").build();
+
+		Mockito.when(productService.update(productId, product)).thenThrow(new ProductsWithSameNameException());
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String productJson = objectMapper.writeValueAsString(product);
+
+		MvcResult mvcResult = mvc
+				.perform(MockMvcRequestBuilders.put(String.format("/product/%s", productId))
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(productJson).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isConflict()).andReturn();
+
+		assertEquals("", mvcResult.getResponse().getContentAsString());
+		Mockito.verify(productService, Mockito.times(1)).update(productId, product);
 	}
 	
 	@Test

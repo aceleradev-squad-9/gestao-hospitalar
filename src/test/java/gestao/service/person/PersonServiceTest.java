@@ -166,10 +166,10 @@ public class PersonServiceTest {
 		Person personWithInfoToUpdate = Person.builder().withName("Pessoa Atualizada").withCpf("65413936052")
 				.withDateOfBirth(LocalDate.of(1995, 8, 24)).withGender(Gender.MALE).build();
 		
-		Person person = Person.builder().withId(personId).withName("Pessoa").withCpf("65413936052")
+		Person personToBeUpdate = Person.builder().withId(personId).withName("Pessoa").withCpf("65413936052")
 				.withDateOfBirth(LocalDate.of(1995, 8, 24)).withGender(Gender.MALE).build();
 
-		when(personRepository.findById(personId)).thenReturn(Optional.of(person));
+		when(personRepository.findById(personId)).thenReturn(Optional.of(personToBeUpdate));
 		when(personRepository.existsByCpfAndIdNot(personWithInfoToUpdate.getCpf(), personId)).thenReturn(Boolean.TRUE);
 
 		assertThrows(PersonsWithSameCpfException.class, () -> service.update(personId, personWithInfoToUpdate));

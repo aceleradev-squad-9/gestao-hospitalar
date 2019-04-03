@@ -10,6 +10,9 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import gestao.model.BaseEntity;
 
 @Entity
@@ -19,6 +22,7 @@ public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty(access = Access.READ_ONLY)
 	private Long id;
 
 	@Column
@@ -52,8 +56,10 @@ public class Product extends BaseEntity {
 	}
 	
 	public void update(Product product) {
-		this.name = product.getName();
-		this.description = product.getDescription();
+		if(product != null) {
+			this.name = product.getName();
+			this.description = product.getDescription();
+		}
 	}
 
 	public static ProductBuilder builder() {

@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import gestao.exception.product.ProductNotFoundException;
+import gestao.exception.product.ProductsWithSameNameException;
 import gestao.model.product.Product;
 import gestao.repository.product.ProductItemRepository;
 import gestao.repository.product.ProductRepository;
@@ -50,6 +51,17 @@ public class ProductServiceTest {
 		assertEquals(expectedProduct.getId(), createdProduct.getId());
 		assertEquals(expectedProduct.getName(), createdProduct.getName());
 		assertEquals(expectedProduct.getDescription(), createdProduct.getDescription());
+	}
+	
+	@Test
+	@DisplayName("Deve lançar uma exceção quando tentar cadastrar um produto que possui um nome já cadastrado por outro")
+	public void shouldNotCreateProductsWithSameName() {
+		Product product = Product.builder().withName("Produto").withDescription("Descrição").build();
+
+		when(productRepository.existsByName(product.getName())).thenReturn(Boolean.TRUE);
+
+		assertThrows(ProductsWithSameNameException.class, () -> service.create(product));
+		Mockito.verify(productRepository, Mockito.times(0)).save(product);
 	}
 
 	@Test
@@ -113,6 +125,23 @@ public class ProductServiceTest {
 		assertEquals(productId, updatedProduct.getId());
 		assertEquals(productWithInfoToUpdate.getName(), updatedProduct.getName());
 		assertEquals(productWithInfoToUpdate.getDescription(), updatedProduct.getDescription());
+	}
+	
+	@Test
+	@DisplayName("Deve lançar uma exceção quando tentar atualizar os dados de um produto com um nome já cadastrado por outro")
+	public void shouldNotUpdateProductsWithSameName() {
+		Long productId = 1L;
+
+		Product productWithInfoToUpdate = Product.builder().withName("Produto Atualizado").withDescription("Descrição Atualizada").build();
+
+		Product productToBeUpdate = Product.builder().withId(productId).withName("Produto")
+				.withDescription("Descrição").build();
+
+		when(productRepository.findById(productId)).thenReturn(Optional.of(productToBeUpdate));
+		when(productRepository.existsByNameAndIdNot(productWithInfoToUpdate.getName(), productId)).thenReturn(Boolean.TRUE);
+
+		assertThrows(ProductsWithSameNameException.class, () -> service.update(productId, productWithInfoToUpdate));
+		Mockito.verify(productRepository, Mockito.times(0)).save(Mockito.any());
 	}
 
 	@Test

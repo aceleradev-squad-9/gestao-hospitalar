@@ -97,15 +97,15 @@ public class PersonService {
 	 */
 	public Person update(Long id, Person personWithInfoToUpdate) {
 
-		Person updatedPerson = this.findById(id);
+		Person personToBeUpdate = this.findById(id);
 
 		if (this.existsPersonWithSameCPF(personWithInfoToUpdate.getCpf(), id)) {
 			throw new PersonsWithSameCpfException();
 		}
 		
-		updatedPerson.update(personWithInfoToUpdate);
+		personToBeUpdate.update(personWithInfoToUpdate);
 		
-		return this.repository.save(updatedPerson);
+		return this.repository.save(personToBeUpdate);
 	}
 
 	/**
