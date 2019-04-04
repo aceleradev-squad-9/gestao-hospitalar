@@ -19,6 +19,7 @@ public class BloodBankItemDto {
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
 	private LocalDateTime dateDonation;
 
     @NotNull(message = "Informe o tipo sanguíneo")
