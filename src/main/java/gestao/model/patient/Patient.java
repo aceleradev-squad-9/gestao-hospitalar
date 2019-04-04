@@ -24,17 +24,17 @@ public class Patient extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull(message = "Você deve informar os dados da pessoa.")
+	@NotNull(message = "VocÃª deve informar os dados da pessoa.")
 	@ManyToOne(fetch=FetchType.EAGER)
 	private Person person;
 
-	@NotNull(message = "A hora do check-in é obrigatória.")
+	@NotNull(message = "A hora do check-in Ã© obrigatÃ³ria.")
 	private LocalDateTime timeCheckIn;
 
 	private LocalDateTime timeCheckOut;
 
-	@NotNull(message = "Você deve informar os dados do hospital.")
-	@ManyToOne(fetch=FetchType.LAZY)
+	@NotNull(message = "VocÃª deve informar os dados do hospital.")
+	@ManyToOne()
 	private Hospital hospital;
 	
 	Patient() {
