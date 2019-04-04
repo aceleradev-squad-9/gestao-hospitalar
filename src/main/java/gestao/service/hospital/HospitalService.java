@@ -85,6 +85,17 @@ public class HospitalService {
 		return hospital.findProductInStock(product);
 	}
 
+	public BloodBankItem findBloodBankInStock(Long hospitalId, Product product) {
+		Hospital hospital = this.findById(hospitalId);
+		return hospital.findBloodBankInStock(product);
+	}
+
+	public BloodBankItem findBloodBankInStockByType(Long hospitalId, BloodType bloodType) {
+//		Hospital hospital = this.findById(hospitalId);
+
+		return null;
+	}
+
 	public ProductItem orderProductFromNearestHospitals(Long hospitalId, Product product, Integer amount) {
 		Hospital originHospital = this.findById(hospitalId);
 

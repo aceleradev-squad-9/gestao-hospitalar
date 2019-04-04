@@ -19,6 +19,7 @@ public class BloodBankItem extends ProductItem {
     private LocalDateTime dateDonation;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private BloodType bloodType;
 
     BloodBankItem(){
