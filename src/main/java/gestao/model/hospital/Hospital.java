@@ -22,6 +22,7 @@ import gestao.model.address.Address;
 import gestao.model.bloodbank.BloodBank;
 import gestao.model.product.BloodBankItem;
 import gestao.model.patient.Patient;
+import gestao.model.product.BloodType;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 
@@ -73,9 +74,9 @@ public class Hospital {
 		return productItem;
 	}
 
-	public BloodBankItem addBloodBankInStock(Product product, Integer amount, LocalDateTime dateDonation) {
+	public BloodBankItem addBloodBankInStock(Product product, Integer amount, LocalDateTime dateDonation, BloodType bloodType) {
 
-		BloodBankItem bloodBankItem = (BloodBankItem) BloodBankItem.builder().withDateDonation(dateDonation).withAmount(amount).withProduct(product).withHospital(this).build();
+		BloodBankItem bloodBankItem = (BloodBankItem) BloodBankItem.builder().withDateDonation(dateDonation).withBloodType(bloodType).withAmount(amount).withProduct(product).withHospital(this).build();
 		this.stock.add(bloodBankItem);
 
 		return bloodBankItem;

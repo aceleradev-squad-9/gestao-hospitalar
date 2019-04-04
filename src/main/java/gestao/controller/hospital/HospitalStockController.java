@@ -45,7 +45,7 @@ public class HospitalStockController {
 		Product product = this.productService.findById(productId);
 
 		BloodBankItem bloodBankItem = this.hospitalService.addBloodBankInStock(hospitalId, product,
-				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation());
+				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation(), bloodBankItemDto.getBloodType());
 
 		return bloodBankItem.convertToBloodBankItemDto();
 	}

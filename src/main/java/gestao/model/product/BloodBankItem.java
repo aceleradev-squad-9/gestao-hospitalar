@@ -18,12 +18,16 @@ public class BloodBankItem extends ProductItem {
     @Column
     private LocalDateTime dateDonation;
 
+    @Column
+    private BloodType bloodType;
+
     BloodBankItem(){
     }
 
-    public BloodBankItem(Hospital hospital, Product product, Integer amount, LocalDateTime dateDonation) {
+    public BloodBankItem(Hospital hospital, Product product, Integer amount, LocalDateTime dateDonation, BloodType bloodType) {
         super(hospital, product, amount);
         this.dateDonation = dateDonation;
+        this.bloodType = bloodType;
     }
 
 
@@ -35,17 +39,28 @@ public class BloodBankItem extends ProductItem {
         return dateDonation;
     }
 
+    public BloodType getBloodType() {
+        return bloodType;
+    }
+
     public static class BloodBankItemBuilder extends ProductItemBuilder {
 
         private LocalDateTime dateDonation;
+
+        private BloodType bloodType;
 
         public BloodBankItemBuilder withDateDonation(LocalDateTime dateDonation) {
             this.dateDonation = dateDonation;
             return this;
         }
 
+        public BloodBankItemBuilder withBloodType(BloodType bloodType) {
+            this.bloodType = bloodType;
+            return this;
+        }
+
         public BloodBankItem build() {
-            return new BloodBankItem(super.build().getHospital(), super.build().getProduct(), super.build().getAmount(), dateDonation);
+            return new BloodBankItem(super.build().getHospital(), super.build().getProduct(), super.build().getAmount(), dateDonation, bloodType);
         }
     }
 
@@ -58,6 +73,7 @@ public class BloodBankItem extends ProductItem {
         BloodBankItemDto bloodBankItemDto = new BloodBankItemDto();
         bloodBankItemDto.setAmount(this.getAmount());
         bloodBankItemDto.setDateDonation(this.getDateDonation());
+        bloodBankItemDto.setBloodType(this.getBloodType());
 
         return bloodBankItemDto;
     }

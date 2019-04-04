@@ -1,4 +1,4 @@
-package gestao.model.bloodbank;
+package gestao.model.product;
 
 import java.util.function.Supplier;
 

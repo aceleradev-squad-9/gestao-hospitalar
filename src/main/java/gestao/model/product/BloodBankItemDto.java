@@ -21,7 +21,10 @@ public class BloodBankItemDto {
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime dateDonation;
 
-	public Integer getAmount() {
+    @NotNull(message = "Informe o tipo sanguíneo")
+    private BloodType bloodType;
+
+    public Integer getAmount() {
 		return amount;
 	}
 
@@ -29,11 +32,19 @@ public class BloodBankItemDto {
 		return dateDonation;
 	}
 
-	public void setAmount(Integer amount) {
+    public BloodType getBloodType() {
+        return bloodType;
+    }
+
+    public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
 
 	public void setDateDonation(LocalDateTime dateDonation) {
 		this.dateDonation = dateDonation;
 	}
+
+    public void setBloodType(BloodType bloodType) {
+        this.bloodType = bloodType;
+    }
 }
