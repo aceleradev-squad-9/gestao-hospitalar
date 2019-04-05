@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.hateoas.Identifiable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
@@ -27,7 +28,7 @@ import gestao.util.jackson.DateSerializer;
  *
  */
 @Entity
-public class Person {
+public class Person implements Identifiable<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

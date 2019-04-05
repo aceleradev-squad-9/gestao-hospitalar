@@ -5,6 +5,8 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,28 +35,33 @@ public class PersonController {
 	@Autowired
 	private PersonService service;
 
+	@Autowired
+	private PersonResourceMapper resourceMapper;
+
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Person create(@RequestBody @Valid Person person) {
-		return this.service.create(person);
+	public PersonResource create(@RequestBody @Valid Person person) {
+		return resourceMapper.toResource(this.service.create(person));
 	}
 
-	@GetMapping(params = {"page", "size"})
-	public Page<Person> find(
-		@RequestParam int page,
-		@RequestParam int size
-	) {
-		return this.service.find(PageRequest.of(page, size));
+	@GetMapping(params = { "page", "size" })
+	public PagedResources<PersonResource> find(@RequestParam int page, @RequestParam int size,
+			PagedResourcesAssembler<Person> pagedResourcesAssembler) {
+
+		Page<Person> personPage = this.service.find(PageRequest.of(page, size));
+
+		return pagedResourcesAssembler.toResource(personPage, resourceMapper);
 	}
 
 	@GetMapping("/{id}")
-	public Person find(@PathVariable Long id) {
-		return this.service.findById(id);
+	public PersonResource find(@PathVariable Long id) {
+
+		return resourceMapper.toResource(this.service.findById(id));
 	}
 
 	@PutMapping("/{id}")
-	public Person update(@PathVariable Long id, @RequestBody @Valid Person person) {
-		return this.service.update(id, person);
+	public PersonResource update(@PathVariable Long id, @RequestBody @Valid Person person) {
+		return resourceMapper.toResource(this.service.update(id, person));
 	}
 
 	@DeleteMapping("/{id}")
