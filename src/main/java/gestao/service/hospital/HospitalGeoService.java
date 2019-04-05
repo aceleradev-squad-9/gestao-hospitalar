@@ -31,6 +31,7 @@ public class HospitalGeoService {
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
+		
 		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 

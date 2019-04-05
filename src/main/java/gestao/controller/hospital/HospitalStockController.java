@@ -85,7 +85,7 @@ public class HospitalStockController {
 		List<Hospital> hospitals = this.hospitalService.findNearestHospitals(hospital);
 
 		Product product = this.productService.findById(productId);
-
+		
 		ProductItem productItem = this.hospitalStockService
 			.transferProductItemFromTheFirstAbleHospital(
 				hospitals, 

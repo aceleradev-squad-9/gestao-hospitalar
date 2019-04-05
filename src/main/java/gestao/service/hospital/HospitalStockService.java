@@ -4,16 +4,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import gestao.exception.hospital.NearestHospitalNotFoundException;
+import gestao.exception.hospital.NoHospitalAbleToTransferProductException;
 import gestao.model.hospital.Hospital;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
+import gestao.service.product.ProductItemService;
 
 @Service
 public class HospitalStockService {
   @Autowired
-  private HospitalService hospitalService;
+	private HospitalService hospitalService;
+	
+	@Autowired
+	private ProductItemService productItemService;
   
   public ProductItem addProductInStock(Long hospitalId, Product product, Integer amount) {
 
@@ -24,28 +29,36 @@ public class HospitalStockService {
 		this.hospitalService.save(hospital);
 
 		return productItem;
-  }
+	}
   
   public ProductItem findProductInStock(Long hospitalId, Product product) {
 		Hospital hospital = this.hospitalService.findById(hospitalId);
 		return hospital.findProductInStock(product);
   }
-  
+	
+	@Transactional
   public ProductItem transferProductItemFromTheFirstAbleHospital(
 		List<Hospital> hospitals,
 		Hospital hospitalNeedingTransfer, 
 		Product product, 
 		Integer amount
 	) {
-		Hospital nearestHospital = hospitals.stream()
-			.filter((hospital) -> hospital.reduceStock(product, amount))
+		Hospital hospitalAbleToTransfer = hospitals.stream()
+			.filter((hospital) -> 
+				productItemService.checkIfHospitalIsAbleToTransferProductItems(
+					hospital,
+					product,
+					amount,
+					Hospital.MIN_STOCK_AMOUNT
+				)
+			)
 			.findFirst()
-			.orElseThrow(NearestHospitalNotFoundException::new);
+			.orElseThrow(NoHospitalAbleToTransferProductException::new);
+
+		this.productItemService.reduceAmountOfItems(hospitalAbleToTransfer, product, amount);
 
 		ProductItem productItem = hospitalNeedingTransfer.addProductInStock(product, amount);
-
 		this.hospitalService.save(hospitalNeedingTransfer);
-		this.hospitalService.save(nearestHospital);
 
 		return productItem;
 	}

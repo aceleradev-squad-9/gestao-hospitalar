@@ -58,7 +58,6 @@ public class HospitalService {
 	}
 
 	public List<Hospital> findNearestHospitals(Hospital hospital) {
-
 		List<Hospital> hospitals = this.hospitalRepository.findAllByIdNot(hospital.getId());
 
 		return this.hospitalGeoService.findNearestHospitals(hospitals, hospital.getAddress());

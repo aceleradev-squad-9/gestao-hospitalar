@@ -24,4 +24,24 @@ public interface ProductItemRepository extends PagingAndSortingRepository<Produc
 	void deleteAllByProduct(Product product);
 
 	Page<ProductItem> findAllByHospitalId(Long hospitalId, Pageable pageable);
+
+	@Query(
+		"SELECT p FROM ProductItem p WHERE p.hospital.id = ?1 AND p.product.id = ?2 AND p.amount-?3 > ?4"
+	)
+	ProductItem checkIfAHospitalIsAbleToTransferItemsOfAProduct(
+		Long hospitalId,
+		Long productId,
+		Integer amount,
+		Integer minAmountOfItemsAHospitalMustHave
+	);
+
+	@Modifying
+	@Query(
+		"UPDATE ProductItem p SET p.amount = p.amount - ?3 WHERE p.hospital.id = ?1 AND p.product.id = ?2"
+	)
+	void reduceAmountOfItemsFromAProduct(
+		Long hospitalId,
+		Long productId,
+		Integer amount
+	);
 }
