@@ -1,14 +1,12 @@
 package gestao.model.bloodbank;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import gestao.model.product.BloodType;
 
 public class BloodBank {
 
 	private Long id;
 
 	private BloodType bloodType;
-
 
 	BloodBank() {
 	}
