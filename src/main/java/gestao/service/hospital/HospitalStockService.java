@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import gestao.model.product.BloodBankItem;
 import gestao.model.product.BloodType;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
+import gestao.model.product.ProductItemDto;
 import gestao.service.product.ProductItemService;
 
 @Service
@@ -61,6 +64,13 @@ public class HospitalStockService {
 		return null;
 	}
 	
+	public Page<ProductItemDto> findAllHospitalProductItems(
+		Long hospitalId, 
+		Pageable pageable
+	) {
+		return productItemService.findAllHospitalProductItems(hospitalId, pageable);
+	}
+
 	@Transactional
   public ProductItem transferProductItemFromTheFirstAbleHospital(
 		List<Hospital> hospitals,
