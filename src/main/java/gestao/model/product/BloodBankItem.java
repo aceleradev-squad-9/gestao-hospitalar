@@ -61,8 +61,15 @@ public class BloodBankItem extends ProductItem {
         }
 
         public BloodBankItem build() {
-            return new BloodBankItem(super.build().getHospital(), super.build().getProduct(), super.build().getAmount(), dateDonation, bloodType);
-        }
+            ProductItem productItem = super.build();
+            return new BloodBankItem(
+                productItem.getHospital(), 
+                productItem.getProduct(), 
+                productItem.getAmount(), 
+                dateDonation, 
+                bloodType
+            );
+        };
     }
 
     public static BloodBankItemBuilder builder() {

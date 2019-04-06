@@ -57,9 +57,15 @@ public class GeoApi {
 
 	private List<Long> getDistances(DistanceMatrix distanceMatrix) {
 
-		return Stream.of(distanceMatrix).flatMap((matrix) -> Stream.of(matrix.rows))
-				.flatMap((row) -> Stream.of(row.elements))
-				.filter((element) -> DistanceMatrixElementStatus.OK.equals(element.status))
-				.map((element) -> element.distance).map((distance) -> distance.inMeters).collect(Collectors.toList());
+		return Stream.of(distanceMatrix)
+			.flatMap((matrix) -> Stream.of(matrix.rows))
+			.flatMap((row) -> Stream.of(row.elements))
+			.map((element) -> {
+				if(DistanceMatrixElementStatus.OK.equals(element.status)){
+					return element.distance.inMeters;
+				}
+				return Long.MAX_VALUE;
+			})
+			.collect(Collectors.toList());
 	}
 }

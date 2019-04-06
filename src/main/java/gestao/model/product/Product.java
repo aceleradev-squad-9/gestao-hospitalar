@@ -1,9 +1,17 @@
 package gestao.model.product;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 import gestao.model.BaseEntity;
 
@@ -14,18 +22,21 @@ public class Product extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty(access = Access.READ_ONLY)
 	private Long id;
 
 	@Column
+	@NotBlank(message="O produto deve possuir um nome.")
 	private String name;
 
 	@Column
+	@NotBlank(message="O produto deve possuir uma descrição.")
 	private String description;
 
-	Product(){
-
+	Product() {
+		
 	}
-
+	
 	Product(Long id, String name, String description) {
 		this.id = id;
 		this.name = name;
@@ -42,6 +53,13 @@ public class Product extends BaseEntity {
 
 	public String getName() {
 		return name;
+	}
+	
+	public void update(Product product) {
+		if(product != null) {
+			this.name = product.getName();
+			this.description = product.getDescription();
+		}
 	}
 
 	public static ProductBuilder builder() {

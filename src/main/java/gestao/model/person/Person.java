@@ -12,6 +12,8 @@ import javax.validation.constraints.Past;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -29,9 +31,10 @@ public class Person {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonProperty(access = Access.READ_ONLY)
 	private Long id;
 
-	@NotBlank(message = "O nome é obrigatório.")
+	@NotBlank(message = "A pessoa deve possuir um nome.")
 	private String name;
 
 	@CPF(message = "O cpf não foi informado ou é inválido.")
@@ -50,7 +53,8 @@ public class Person {
 
 	}
 
-	Person(String name, String cpf, LocalDate dateOfBirth, Gender gender) {
+	Person(Long id, String name, String cpf, LocalDate dateOfBirth, Gender gender) {
+		this.id = id;
 		this.name = name;
 		this.cpf = cpf;
 		this.dateOfBirth = dateOfBirth;
@@ -61,40 +65,100 @@ public class Person {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getCpf() {
 		return cpf;
 	}
 
-	public void setCpf(String cpf) {
-		this.cpf = cpf;
-	}
-
 	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
-	}
-
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
 	}
 
 	public Gender getGender() {
 		return gender;
 	}
+	
+	public void update(Person person) {
+		if(person != null) {
+			this.name = person.getName();
+			this.cpf = person.getCpf();
+			this.dateOfBirth = person.getDateOfBirth();
+			this.gender = person.getGender();
+		}
+	}
 
-	public void setGender(Gender gender) {
-		this.gender = gender;
+	public static PersonBuilder builder() {
+		return new PersonBuilder();
+	}
+
+	public static class PersonBuilder {
+
+		private Long id;
+
+		private String name;
+
+		private String cpf;
+
+		private LocalDate dateOfBirth;
+
+		private Gender gender;
+
+		public PersonBuilder withId(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public PersonBuilder withName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public PersonBuilder withCpf(String cpf) {
+			this.cpf = cpf;
+			return this;
+		}
+
+		public PersonBuilder withDateOfBirth(LocalDate dateOfBirth) {
+			this.dateOfBirth = dateOfBirth;
+			return this;
+		}
+
+		public PersonBuilder withGender(Gender gender) {
+			this.gender = gender;
+			return this;
+		}
+
+		public Person build() {
+			return new Person(id, name, cpf, dateOfBirth, gender);
+		}
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 
 }

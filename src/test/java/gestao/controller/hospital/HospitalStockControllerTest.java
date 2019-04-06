@@ -2,6 +2,8 @@ package gestao.controller.hospital;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,6 +19,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,6 +37,7 @@ import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 import gestao.model.product.ProductItemDto;
 import gestao.service.hospital.HospitalService;
+import gestao.service.product.ProductItemService;
 import gestao.service.product.ProductService;
 
 @WebMvcTest(controllers = HospitalStockController.class)
@@ -39,6 +45,9 @@ public class HospitalStockControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
+
+	@MockBean
+	private ProductItemService productItemService;
 
 	@MockBean
 	private HospitalService hospitalService;
@@ -71,7 +80,7 @@ public class HospitalStockControllerTest {
 
 		MvcResult mvcResult = mvc.perform(put(String.format("/hospital/%s/stock/%s", hospitalId, productId))
 				.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated()).andReturn();
+				.andExpect(status().isOk()).andReturn();
 
 		assertEquals(productItemDtoJson, mvcResult.getResponse().getContentAsString());
 	}
@@ -164,36 +173,73 @@ public class HospitalStockControllerTest {
 
 		Long hospitalId = 1L;
 		Hospital hospital = Mockito.mock(Hospital.class);
-		ProductItem productItemA = ProductItem.builder().withAmount(10).withHospital(hospital)
-				.withProduct(Product.builder().withName("Product A").withDescription("Descrição").build()).build();
-		ProductItem productItemB = ProductItem.builder().withAmount(10).withHospital(hospital)
-				.withProduct(Product.builder().withName("Product B").withDescription("Descrição").build()).build();
+		ProductItem productItemA = ProductItem.builder()
+			.withAmount(10)
+			.withHospital(hospital)
+			.withProduct(
+				Product.builder()
+					.withName("Product A")
+					.withDescription("Descrição")
+					.build()
+			)
+			.build();
 
-		List<ProductItem> productItemList = Arrays.asList(productItemA, productItemB);
-		List<ProductItemDto> dtos = Arrays.asList(productItemA.convertToDto(), productItemB.convertToDto());
+		ProductItem productItemB = ProductItem.builder()
+			.withAmount(10)
+			.withHospital(hospital)
+			.withProduct(
+				Product.builder()
+					.withName("Product B")
+					.withDescription("Descrição")
+					.build()
+			)
+			.build();
 
-		Mockito.when(hospital.getStock()).thenReturn(productItemList);
+		List<ProductItemDto> dtos = Arrays.asList(
+			productItemA.convertToDto(), 
+			productItemB.convertToDto()
+		);
 
-		Mockito.when(hospitalService.findById(hospitalId)).thenReturn(hospital);
+		Page<ProductItemDto> dtosPage = new PageImpl<>(dtos);
 
-		MvcResult mvcResult = mvc.perform(get(String.format("/hospital/%s/stock/", hospitalId))
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andReturn();
+		when(
+			productItemService.findAllHospitalProductItems(
+				isA(Long.class), 
+				isA(Pageable.class)
+			)
+		)
+		.thenReturn(dtosPage);
+		MvcResult mvcResult = mvc.perform(
+				get(String.format("/hospital/%s/stock?page=0&size="+dtos.size(), hospitalId)
+			)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andReturn();
 
 		ObjectMapper objectMapper = new ObjectMapper();
 
-		assertEquals(objectMapper.writeValueAsString(dtos), mvcResult.getResponse().getContentAsString());
+		assertEquals(
+			objectMapper.writeValueAsString(dtosPage), 
+			mvcResult.getResponse().getContentAsString()
+		);
 	}
 
 	@Test
 	@DisplayName("Deve receber http status 404 ao tentar buscar os produtos de um hospital não cadastrado.")
 	public void shouldReceiveHospitalNotFoundWhenFindStockProducts() throws Exception {
 
-		Mockito.when(hospitalService.findById(Mockito.any())).thenThrow(new HospitalNotFoundException());
+		Mockito.doThrow(new HospitalNotFoundException())
+			.when(hospitalService)
+			.verifyIfExistsById(isA(Long.class));
 
-		MvcResult mvcResult = mvc.perform(get(String.format("/hospital/%s/stock/", 1L))
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound()).andReturn();
+		MvcResult mvcResult = mvc.perform(
+				get(String.format("/hospital/%s/stock?page=0&size=1", 1L)
+			)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound())
+			.andReturn();
 
 		assertEquals("", mvcResult.getResponse().getContentAsString());
 	}

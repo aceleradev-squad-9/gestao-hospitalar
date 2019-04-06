@@ -1,6 +1,6 @@
 package gestao.repository.person;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import gestao.model.person.Person;
@@ -12,7 +12,7 @@ import gestao.model.person.Person;
  *
  */
 @Repository
-public interface PersonRepository extends CrudRepository<Person, Long> {
+public interface PersonRepository extends PagingAndSortingRepository<Person, Long> {
 
 	Boolean existsByCpf(String cpf);
 	

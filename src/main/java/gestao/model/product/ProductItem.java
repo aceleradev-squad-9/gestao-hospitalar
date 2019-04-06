@@ -51,22 +51,8 @@ public class ProductItem extends BaseEntity {
 		return product;
 	}
 
-	public Hospital getHospital() {
+	public Hospital getHospital(){
 		return hospital;
-	}
-
-	public Boolean ableToReduce(Integer amount, Integer minAmount){
-		return amount != null && ((this.amount - amount) > minAmount);
-	}
-
-	public Boolean reduceAmount(Integer amount, Integer minAmount) {
-
-		Boolean hasReduced = Boolean.FALSE;
-		if (this.ableToReduce(amount, minAmount)) {
-			this.amount -= amount;
-			hasReduced = Boolean.TRUE;
-		}
-		return hasReduced;
 	}
 
 	public void increaseAmount(Integer amount) {

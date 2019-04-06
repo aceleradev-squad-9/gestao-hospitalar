@@ -1,8 +1,11 @@
 package gestao.service.person;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.person.PersonNotFoundException;
@@ -43,8 +46,8 @@ public class PersonService {
 	 * 
 	 * @return lista de pessoas - {@link List}
 	 */
-	public Iterable<Person> find() {
-		return this.repository.findAll();
+	public Page<Person> find(Pageable page) {		
+		return this.repository.findAll(page);
 	}
 
 	/**
@@ -55,20 +58,8 @@ public class PersonService {
 	 * @param id - {@link Long}
 	 * @return pessoa - {@link Person}
 	 */
-	public Person find(Long id) {
+	public Person findById(Long id) {
 		return this.repository.findById(id).orElseThrow(() -> new PersonNotFoundException());
-	}
-
-	/**
-	 * Método responsável por verificar se uma pessoa existe utilizando o seu
-	 * identificador único.
-	 * 
-	 * @param id - {@link Long}
-	 * @return retorna true, caso a pessoa exista e false, caso não exista. -
-	 *         {@link Boolean}
-	 */
-	private Boolean existsById(Long id) {
-		return this.repository.existsById(id);
 	}
 
 	/**
@@ -100,20 +91,21 @@ public class PersonService {
 	 * Método responsável por atualizar uma pessoa. Caso a pessoa não seja
 	 * encontrada, o método lança um {@link PersonNotFoundException}.
 	 * 
-	 * @param person - {@link Person}
+	 * @param id - {@link Long}
+	 * @param personWithInfoToUpdate - {@link Person}
 	 * @return pessoa atualizada - {@link Person}
 	 */
-	public Person update(Person person) {
+	public Person update(Long id, Person personWithInfoToUpdate) {
 
-		if (!this.existsById(person.getId())) {
-			throw new PersonNotFoundException();
-		}
+		Person personToBeUpdate = this.findById(id);
 
-		if (this.existsPersonWithSameCPF(person.getCpf(), person.getId())) {
+		if (this.existsPersonWithSameCPF(personWithInfoToUpdate.getCpf(), id)) {
 			throw new PersonsWithSameCpfException();
 		}
-
-		return this.repository.save(person);
+		
+		personToBeUpdate.update(personWithInfoToUpdate);
+		
+		return this.repository.save(personToBeUpdate);
 	}
 
 	/**
@@ -124,7 +116,7 @@ public class PersonService {
 	 * @param id - {@link Long}
 	 */
 	public void delete(Long id) {
-		this.repository.delete(this.find(id));
+		this.repository.delete(this.findById(id));
 	}
 
 }

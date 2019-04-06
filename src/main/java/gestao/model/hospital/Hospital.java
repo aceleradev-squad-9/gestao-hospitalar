@@ -55,8 +55,7 @@ public class Hospital {
 	@Where(clause = "dtype = 'BloodBankItem'")
 	private List<BloodBankItem> bloodBank = new ArrayList<>();
 
-
-	private static final Integer MIN_STOCK_AMOUNT = 4;
+	public static final Integer MIN_STOCK_AMOUNT = 4;
 
 	Hospital() {
 	}
@@ -85,17 +84,10 @@ public class Hospital {
 	public BloodBankItem addBloodBankInStock(Product product, Integer amount, LocalDateTime dateDonation, BloodType bloodType) {
 
 		BloodBankItem bloodBankItem = (BloodBankItem) BloodBankItem.builder().withDateDonation(dateDonation).withBloodType(bloodType).withAmount(amount).withProduct(product).withHospital(this).build();
-		//this.stock.add(bloodBankItem);
+		
 		this.bloodBank.add(bloodBankItem);
 
 		return bloodBankItem;
-	}
-
-	public Boolean reduceStock(Product product, Integer amount) {
-
-		return this.getProductItem(product).map(
-				(productItem) -> productItem.reduceAmount(amount, MIN_STOCK_AMOUNT))
-				.orElse(Boolean.FALSE);
 	}
 
 	private Optional<ProductItem> getProductItem(Product product) {
