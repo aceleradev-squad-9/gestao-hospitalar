@@ -30,7 +30,7 @@ public class PatientService {
 	private PatientRepository repository;
 	
 	public Patient checkIn(Long personId, Long hospitalId) {
-		Person person = personService.find(personId);
+		Person person = personService.findById(personId);
 		Hospital hospital = hospitalService.findById(hospitalId);
 		
 		Patient patient = Patient.builder()
