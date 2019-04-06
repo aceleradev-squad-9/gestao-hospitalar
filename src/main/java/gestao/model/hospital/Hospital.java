@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
+import gestao.model.bloodbank.BloodBank;
 import gestao.model.product.BloodBankItem;
 import gestao.model.patient.Patient;
 import gestao.model.product.BloodType;

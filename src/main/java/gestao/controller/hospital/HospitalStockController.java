@@ -1,8 +1,6 @@
 package gestao.controller.hospital;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import static java.util.stream.Collectors.*;
 
 import javax.validation.Valid;
