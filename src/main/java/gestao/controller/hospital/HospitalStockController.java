@@ -23,7 +23,6 @@ import gestao.model.product.*;
 import gestao.model.hospital.Hospital;
 import gestao.service.hospital.HospitalService;
 import gestao.service.hospital.HospitalStockService;
-import gestao.service.product.ProductItemService;
 import gestao.service.product.ProductService;
 
 @RestController
