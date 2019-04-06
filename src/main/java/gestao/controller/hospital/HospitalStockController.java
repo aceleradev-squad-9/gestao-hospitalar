@@ -36,9 +36,6 @@ public class HospitalStockController {
 	@Autowired
 	private ProductService productService;
 
-	@Autowired
-	private ProductItemService productItemService;
-
 	@PutMapping("/{productId}")
 	public ProductItemDto addProductInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
 			@RequestBody @Valid ProductItemDto productItemDto) {
@@ -61,7 +58,7 @@ public class HospitalStockController {
 		@RequestParam int size,
 		@PathVariable Long hospitalId
 	) {
-		return this.productItemService.findAllHospitalProductItems(
+		return this.hospitalStockService.findAllHospitalProductItems(
 			hospitalId, 
 			PageRequest.of(page, size)
 		);
