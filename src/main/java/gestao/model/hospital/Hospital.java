@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
+import gestao.model.bloodbank.BloodBankItem;
 import gestao.model.patient.Patient;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
@@ -45,7 +46,10 @@ public class Hospital {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
 	private List<ProductItem> stock = new ArrayList<>();
 
-	private static final Integer MIN_STOCK_AMOUNT = 4;
+	@OneToMany(mappedBy = "hospital")
+	private List<BloodBankItem> bloodBank = new ArrayList<>();
+
+	public static final Integer MIN_STOCK_AMOUNT = 4;
 
 	Hospital() {
 	}
@@ -65,13 +69,6 @@ public class Hospital {
 		}
 
 		return productItem;
-	}
-
-	public Boolean reduceStock(Product product, Integer amount) {
-
-		return this.getProductItem(product).map(
-				(productItem) -> productItem.reduceAmount(amount, MIN_STOCK_AMOUNT))
-				.orElse(Boolean.FALSE);
 	}
 
 	private Optional<ProductItem> getProductItem(Product product) {

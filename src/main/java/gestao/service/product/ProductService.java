@@ -3,10 +3,13 @@ package gestao.service.product;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gestao.exception.product.ProductNotFoundException;
+import gestao.exception.product.ProductsWithSameNameException;
 import gestao.model.product.Product;
 import gestao.repository.product.ProductItemRepository;
 import gestao.repository.product.ProductRepository;
@@ -34,6 +37,10 @@ public class ProductService {
 	 */
 	public Product create(Product product) {
 
+		if (this.existsByName(product.getName())) {
+			throw new ProductsWithSameNameException();
+		}
+
 		return this.productRepository.save(product);
 	}
 
@@ -44,6 +51,16 @@ public class ProductService {
 	 */
 	public Iterable<Product> find() {
 		return this.productRepository.findAll();
+	}
+
+	/**
+	 * Método responsável por obter uma lista de produtos com paginação.
+	 * 
+	 * @param pageable - {@link Pageable}
+	 * @return lista de produtos - {@link List}
+	 */
+	public Page<Product> find(Pageable pageable) {
+		return this.productRepository.findAll(pageable);
 	}
 
 	/**
@@ -59,31 +76,48 @@ public class ProductService {
 	}
 
 	/**
-	 * Método responsável por verificar se um produto existe utilizando o seu
-	 * identificador único.
+	 * Método responsável por verificar se um produto já cadastrado possui um nome
+	 * igual a outro.
 	 * 
-	 * @param id - {@link Long}
+	 * @param name - {@link String}
+	 * @param id   - {@link Long}
+	 * @return retorna true, caso existam produtos com o mesmo nome e false, caso
+	 *         não exista. - {@link Boolean}
+	 */
+	private Boolean existsProductWithSameName(String name, Long id) {
+		return this.productRepository.existsByNameAndIdNot(name, id);
+	}
+
+	/**
+	 * Método responsável por verificar se um produto está cadastrado, utilizando o
+	 * seu nome.
+	 * 
+	 * @param name - {@link String}
 	 * @return retorna true, caso o produto exista e false, caso não exista. -
 	 *         {@link Boolean}
 	 */
-	private Boolean existsById(Long id) {
-		return this.productRepository.existsById(id);
+	private Boolean existsByName(String name) {
+		return this.productRepository.existsByName(name);
 	}
 
 	/**
 	 * Método responsável por atualizar um produto. Caso o produto não seja
 	 * encontrado, o método lança um {@link ProductNotFoundException}.
 	 * 
-	 * @param product - {@link Product}
+	 * @param id                      - {@link Long}
+	 * @param productWithInfoToUpdate - {@link Product}
 	 * @return produto atualizado - {@link Product}
 	 */
-	public Product update(Product product) {
+	public Product update(Long id, Product productWithInfoToUpdate) {
 
-		if (!this.existsById(product.getId())) {
-			throw new ProductNotFoundException();
+		Product productToBeUpdate = this.findById(id);
+
+		if (this.existsProductWithSameName(productWithInfoToUpdate.getName(), id)) {
+			throw new ProductsWithSameNameException();
 		}
+		productToBeUpdate.update(productWithInfoToUpdate);
 
-		return this.productRepository.save(product);
+		return this.productRepository.save(productToBeUpdate);
 	}
 
 	/**
@@ -96,7 +130,7 @@ public class ProductService {
 	@Transactional
 	public void delete(Long id) {
 		Product product = this.findById(id);
-		this.productRepository.delete(product);
 		this.productItemRepository.deleteAllByProduct(product);
+		this.productRepository.delete(product);
 	}
 }

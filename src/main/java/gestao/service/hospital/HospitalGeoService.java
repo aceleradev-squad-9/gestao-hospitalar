@@ -18,11 +18,11 @@ import gestao.util.geo.GeoApi;
 
 @Service
 public class HospitalGeoService {
-  
-  @Autowired
+
+	@Autowired
 	private GeoApi geoApi;
 
-  @Cacheable(value = "nearestHospitals")
+	@Cacheable(value = "nearestHospitals")
 	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
@@ -31,25 +31,22 @@ public class HospitalGeoService {
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
+		
 		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 
-	private List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
+	public List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
 		return IntStream.range(0, distances.size()).boxed()
-      .map((i) -> new AbstractMap.SimpleEntry<>(hospitals.get(i), distances.get(i)))
-      .sorted(Comparator.comparing(AbstractMap.SimpleEntry::getValue))
-      .map(AbstractMap.SimpleEntry::getKey)
-      .collect(Collectors.toList());
+				.map((i) -> new AbstractMap.SimpleEntry<>(hospitals.get(i), distances.get(i)))
+				.sorted(Comparator.comparing(AbstractMap.SimpleEntry::getValue)).map(AbstractMap.SimpleEntry::getKey)
+				.collect(Collectors.toList());
 	}
 
-	private String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
-		
-		return hospitals.stream().map((hospital) -> hospital.getAddress()
-				.getFormattedAddress()).toArray(String[]::new);
+	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
+		return hospitals.stream().map(hospital -> hospital.getAddress().getFormattedAddress()).toArray(String[]::new);
 	}
 
-
-	private List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
+	public List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
 		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(),
 				this.getHospitalsFormattedAddresses(hospitals));
 
@@ -58,23 +55,9 @@ public class HospitalGeoService {
 		}
 
 		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
-
 		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
 
-    return IntStream.range(0, hospitals.size())
-      .boxed()
-      .sorted((a, b) -> {
-        if (arrayOfDistances.get(a) < arrayOfDistances.get(b)) {
-          return -1;
-        }
-
-        if (arrayOfDistances.get(a) > arrayOfDistances.get(b)) {
-          return 1;
-        }
-
-        return 0;
-      })
-      .<Hospital>map(i -> arrayOfHospitals.get(i))
-      .collect(Collectors.toList());
+		return IntStream.range(0, hospitals.size()).boxed().sorted(Comparator.comparing(arrayOfDistances::get))
+				.<Hospital>map(i -> arrayOfHospitals.get(i)).collect(Collectors.toList());
 	}
 }
