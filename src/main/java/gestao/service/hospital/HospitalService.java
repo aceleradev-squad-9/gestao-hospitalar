@@ -3,7 +3,6 @@ package gestao.service.hospital;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import gestao.model.bloodbank.BloodBank;
 import gestao.model.product.BloodBankItem;
 import gestao.model.product.BloodType;
 import org.springframework.beans.factory.annotation.Autowired;

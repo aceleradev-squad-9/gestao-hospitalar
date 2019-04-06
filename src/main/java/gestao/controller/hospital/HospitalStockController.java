@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import gestao.model.bloodbank.BloodBank;
 import gestao.model.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
