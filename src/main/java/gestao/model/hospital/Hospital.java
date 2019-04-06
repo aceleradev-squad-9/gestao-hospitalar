@@ -49,7 +49,7 @@ public class Hospital {
 	@OneToMany(mappedBy = "hospital")
 	private List<BloodBankItem> bloodBank = new ArrayList<>();
 
-	private static final Integer MIN_STOCK_AMOUNT = 4;
+	public static final Integer MIN_STOCK_AMOUNT = 4;
 
 	Hospital() {
 	}
@@ -69,13 +69,6 @@ public class Hospital {
 		}
 
 		return productItem;
-	}
-
-	public Boolean reduceStock(Product product, Integer amount) {
-
-		return this.getProductItem(product).map(
-				(productItem) -> productItem.reduceAmount(amount, MIN_STOCK_AMOUNT))
-				.orElse(Boolean.FALSE);
 	}
 
 	private Optional<ProductItem> getProductItem(Product product) {
