@@ -27,21 +27,6 @@ public class HospitalStockController {
 	@Autowired
 	private ProductService productService;
 
-
-	@PostMapping("/bloodbank/{productId}")
-	@ResponseStatus(code = HttpStatus.CREATED)
-	public BloodBankItemDto addBloodBankInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
-												@RequestBody @Valid BloodBankItemDto bloodBankItemDto) {
-
-		Product product = this.productService.findById(productId);
-
-		BloodBankItem bloodBankItem = this.hospitalService.addBloodBankInStock(hospitalId, product,
-				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation(), bloodBankItemDto.getBloodType());
-
-		return bloodBankItem.convertToBloodBankItemDto();
-	}
-
-
 	@PutMapping("/{productId}")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public ProductItemDto addProductInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
@@ -65,6 +50,19 @@ public class HospitalStockController {
 	public ProductItemDto findStockProduct(@PathVariable Long hospitalId, @PathVariable Long productId) {
 		Product product = productService.findById(productId);
 		return hospitalService.findProductInStock(hospitalId, product).convertToDto();
+	}
+
+	@PostMapping("/bloodbank/{productId}")
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public BloodBankItemDto addBloodBankInStock(@PathVariable Long hospitalId, @PathVariable Long productId,
+												@RequestBody @Valid BloodBankItemDto bloodBankItemDto) {
+
+		Product product = this.productService.findById(productId);
+
+		BloodBankItem bloodBankItem = this.hospitalService.addBloodBankInStock(hospitalId, product,
+				bloodBankItemDto.getAmount(), bloodBankItemDto.getDateDonation(), bloodBankItemDto.getBloodType());
+
+		return bloodBankItem.convertToBloodBankItemDto();
 	}
 
 	@GetMapping("/bloodbank")
