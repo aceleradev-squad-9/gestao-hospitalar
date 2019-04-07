@@ -43,7 +43,7 @@ public class HospitalService {
 		return hospitalRepository.findAll(pageable);
 	}
 
-	public List<Hospital> findAll(){
+	public List<Hospital> findAll() {
 		return hospitalRepository.findAll();
 	}
 

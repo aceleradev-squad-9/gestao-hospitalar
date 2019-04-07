@@ -1,5 +1,6 @@
 package gestao.model.hospital;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,12 +15,18 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import gestao.exception.hospital.HospitalNotAbleToReceivePatientsException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
 import gestao.model.bloodbank.BloodBankItem;
 import gestao.model.patient.Patient;
+import gestao.model.person.Person;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 
@@ -56,6 +63,20 @@ public class Hospital {
 
 	public List<ProductItem> getStock() {
 		return Collections.unmodifiableList(this.stock);
+	}
+	
+	public Patient checkIn(Long numberOfPatientsInBeds, Person person) {
+		
+		if(numberOfPatientsInBeds >= maximumNumberOfBeds) {
+			throw new HospitalNotAbleToReceivePatientsException();
+		}
+		
+		Patient patient = Patient.builder().withHospital(this)
+				.withTimeCheckIn(LocalDateTime.now()).build();
+		
+		this.patients.add(patient);
+		
+		return patient;
 	}
 
 	public ProductItem addProductInStock(Product product, Integer amount) {

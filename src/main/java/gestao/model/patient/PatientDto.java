@@ -7,6 +7,8 @@ import gestao.model.person.Gender;
 
 public class PatientDto {
 
+	private Long id;
+
 	private String name;
 
 	private String cpf;
@@ -17,7 +19,8 @@ public class PatientDto {
 
 	private LocalDateTime timeCheckIn;
 
-	PatientDto(String name, String cpf, LocalDate dateOfBirth, Gender gender, LocalDateTime timeCheckIn) {
+	PatientDto(Long id, String name, String cpf, LocalDate dateOfBirth, Gender gender, LocalDateTime timeCheckIn) {
+		this.id = id;
 		this.name = name;
 		this.cpf = cpf;
 		this.dateOfBirth = dateOfBirth;
@@ -43,6 +46,10 @@ public class PatientDto {
 
 	public LocalDateTime getTimeCheckIn() {
 		return timeCheckIn;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 }

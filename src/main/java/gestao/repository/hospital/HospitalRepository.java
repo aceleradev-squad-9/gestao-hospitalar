@@ -2,6 +2,7 @@ package gestao.repository.hospital;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,7 @@ public interface HospitalRepository extends PagingAndSortingRepository<Hospital,
 	List<Hospital> findAll();
 	
 	List<Hospital> findAllByIdNot(Long id);
+	
+	@Query("select count(p) from Hospital h JOIN h.patients p where p.time")
+	Long countPatientsOccupyingBeds(Long id);
 }

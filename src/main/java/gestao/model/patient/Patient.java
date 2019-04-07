@@ -74,6 +74,7 @@ public class Patient extends BaseEntity {
 	public PatientDto convertToDto() {
 
 		return new PatientDto(
+				person.getId(),
 				person.getName(), 
 				person.getCpf(), 
 				person.getDateOfBirth(), 

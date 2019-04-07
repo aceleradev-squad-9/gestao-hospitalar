@@ -23,8 +23,12 @@ public interface PatientRepository extends CrudRepository<Patient, Long> {
 	
 	List<Patient> findAllByIdNot(Long id);
 	
+	Long countByHospitalAndTimeCheckOutIsNull(Hospital hospital);
+
 	List<Patient> findAllByHospitalAndTimeCheckOutIsNull(Hospital hospital);
 	
 	Optional<Patient> findByHospitalAndPersonAndTimeCheckOutIsNull(Hospital hospital, Person person);
+
+	Boolean existsByHospitalAndPersonAndTimeCheckOutIsNull(Hospital hospital, Person person);
 
 }

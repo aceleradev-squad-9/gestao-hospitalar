@@ -21,7 +21,6 @@ import gestao.model.product.ProductItem;
 import gestao.model.product.ProductItemDto;
 import gestao.service.hospital.HospitalService;
 import gestao.service.hospital.HospitalStockService;
-import gestao.service.product.ProductItemService;
 import gestao.service.product.ProductService;
 
 @RestController
