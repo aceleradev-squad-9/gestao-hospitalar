@@ -2,7 +2,6 @@ package gestao.controller.hospital;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -367,54 +366,67 @@ public class HospitalStockControllerTest {
 	}
 
 	@Test
-	@DisplayName("Esse teste deve ser refatorado: Deve receber http status 404 ao solicitar para outro hospital, um produto não cadastrado.")
+	@DisplayName("Deve receber http status 404 ao solicitar para outro hospital, um produto não cadastrado.")
 	public void shouldReceiveProductNotFoundWhenOrderProductFromHospital() throws Exception {
-		assertTrue(false);
-		// Long hospitalId = 1L;
-		// Long productId = 1L;
+		Long hospitalId = 1L;
+		Long productId = 1L;
 
-		// ProductItemDto productItemDto = new ProductItemDto();
-		// productItemDto.setAmount(10);
+		ProductItemDto productItemDto = new ProductItemDto();
+		productItemDto.setAmount(10);
 
-		// Mockito.when(productService.findById(productId)).thenThrow(new ProductNotFoundException());
+		Mockito.when(productService.findById(productId))
+			.thenThrow(new ProductNotFoundException());
 
-		// ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		// String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+		String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
 
-		// MvcResult mvcResult = mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
-		// 		.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-		// 		.andExpect(status().isNotFound()).andReturn();
+		MvcResult mvcResult = mvc.perform(
+			put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId)
+		)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(productItemDtoJson)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound()).andReturn();
 
-		// assertEquals("", mvcResult.getResponse().getContentAsString());
+		assertEquals("", mvcResult.getResponse().getContentAsString());
 
-		// Mockito.verify(hospitalService, Mockito.times(0)).orderProductFromNearestHospitals(Mockito.any(), Mockito.any(),
-		// 		Mockito.anyInt());
+		Mockito.verify(hospitalStockService, Mockito.times(0))
+			.transferProductItemFromTheFirstAbleHospital(
+				Mockito.any(),
+				Mockito.any(), 
+				Mockito.any(),
+				Mockito.anyInt()
+			);
 	}
 
 	@Test
-	@DisplayName("Esse teste deve ser refatorado: Deve receber http status 400 ao solicitar para outro hospital uma quantidade inválida de um produto.")
+	@DisplayName("Deve receber http status 400 ao solicitar para outro hospital uma quantidade inválida de um produto.")
 	public void shouldReceiveValidationErrorsWhenOrderProductFromHospitalWithInvalidAmount() throws Exception {
-		assertTrue(false);
-		// Long hospitalId = 1L;
-		// Long productId = 1L;
+		Long hospitalId = 1L;
+		Long productId = 1L;
 
-		// ProductItemDto productItemDto = new ProductItemDto();
-		// productItemDto.setAmount(-1);
+		ProductItemDto productItemDto = new ProductItemDto();
+		productItemDto.setAmount(-1);
 
-		// ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		// String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+		String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
 
-		// mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
-		// 		.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-		// 		.andExpect(status().isBadRequest())
-		// 		.andExpect(jsonPath("$.errors.['amount'][0]", is("A quantidade do produto deve ser maior que 0")))
-		// 		.andReturn();
+		mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
+				.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.errors.['amount'][0]", is("A quantidade do produto deve ser maior que 0")))
+				.andReturn();
 
-		// Mockito.verify(productService, Mockito.times(0)).findById(Mockito.anyLong());
-		// Mockito.verify(hospitalService, Mockito.times(0)).orderProductFromNearestHospitals(Mockito.any(), Mockito.any(),
-		// 		Mockito.anyInt());
+		Mockito.verify(productService, Mockito.times(0)).findById(Mockito.anyLong());
+		Mockito.verify(hospitalStockService, Mockito.times(0))
+			.transferProductItemFromTheFirstAbleHospital(
+				Mockito.any(),
+				Mockito.any(), 
+				Mockito.any(),
+				Mockito.anyInt()
+			);
 	}
 
 }
