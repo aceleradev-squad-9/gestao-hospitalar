@@ -3,6 +3,7 @@ package gestao.service.hospital;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -25,11 +26,15 @@ import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
+import gestao.service.product.ProductItemService;
 
 @SpringBootTest
 public class HospitalStockServiceTest {
   @MockBean
 	private HospitalService mockedHospitalService;
+
+	@MockBean
+	private ProductItemService mockedProductItemService;
   
   @InjectMocks
   @Autowired
@@ -182,9 +187,9 @@ public class HospitalStockServiceTest {
 	}
 	
 	@Test
-	@DisplayName("Esse teste deve ser refeito. Deve transferir produtos entre hospitais mais próximos.")
+	@DisplayName("Transferir itens de um produto de um hospital B para um hospital A, onde B é o hospital mais próximo de A e que pode transferir os itens.")
 	public void shouldOrderProductFromNearestHospital() {
-		assertTrue(false);
+
 		final Long HOSPITAL_ID = 1L;
 		final Integer PRODUCT_AMOUNT = 10;
 		final Integer REQUESTED_AMOUNT = 5;
@@ -193,8 +198,10 @@ public class HospitalStockServiceTest {
 		Hospital hospitalB = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 1);
 		Hospital hospitalC = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 2);
 
-		Product product = Product.builder().withName("Produto")
-				.withDescription("Descrição").build();
+		Product product = Product.builder()
+			.withName("Produto")
+			.withDescription("Descrição")
+			.build();
 		
 		hospitalA.addProductInStock(product, PRODUCT_AMOUNT);
 		hospitalB.addProductInStock(product, PRODUCT_AMOUNT);
@@ -204,34 +211,46 @@ public class HospitalStockServiceTest {
 		
 		when(mockedHospitalService.findNearestHospitals(hospitalA))
 				.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findAllByIdNot(HOSPITAL_ID))
-		// 		.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findById(HOSPITAL_ID))
-		// 		.thenReturn(Optional.of(hospitalA));
-		// when(mockedHospitalRepository.save(hospitalA))
-		// 		.thenReturn(hospitalA);
-		// when(mockedHospitalRepository.save(hospitalB))
-		// 		.thenReturn(hospitalB);
 
-		// ProductItem increasedProductItem = this.hospitalStockService
-    //   .transferProductItemFromTheFirstAbleHospital(
-    //     HOSPITAL_ID, 
-    //     product, 
-    //     REQUESTED_AMOUNT, 
-    //     Hospital.MIN_PRODUCT_AMOUNT
-    //   );
+		when(
+			mockedProductItemService.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalB, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT
+			)
+		).thenReturn(Boolean.TRUE);
 		
-		// assertEquals(product.getName(), increasedProductItem.getProductName());
-		// assertEquals(product.getDescription(), increasedProductItem.getProductDescription());
-		// assertEquals(PRODUCT_AMOUNT + REQUESTED_AMOUNT, increasedProductItem.getAmount().intValue());
+		when(mockedHospitalService.save(hospitalA))
+			.thenReturn(hospitalA);
+
+		ProductItem increasedProductItem = this.hospitalStockService
+      .transferProductItemFromTheFirstAbleHospital(
+				hospitals,
+        hospitalA, 
+        product, 
+        REQUESTED_AMOUNT
+      );
 		
-		// ProductItem reducedProductItem = hospitalB.findProductInStock(product);
-		// assertEquals(product.getName(), reducedProductItem.getProductName());
-		// assertEquals(product.getDescription(), reducedProductItem.getProductDescription());
-		// assertEquals(PRODUCT_AMOUNT - REQUESTED_AMOUNT, reducedProductItem.getAmount().intValue());
+		assertEquals(product.getName(), increasedProductItem.getProductName());
+		assertEquals(product.getDescription(), increasedProductItem.getProductDescription());
+		assertEquals(PRODUCT_AMOUNT + REQUESTED_AMOUNT, increasedProductItem.getAmount().intValue());
 		
-		// Mockito.verify(mockedHospitalRepository, times(1)).save(hospitalA);
-		// Mockito.verify(mockedHospitalRepository, times(1)).save(hospitalB);
+		Mockito.verify(mockedProductItemService, times(1))
+			.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalB, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT	
+			);
+
+		Mockito.verify(mockedProductItemService, times(1)).reduceAmountOfItems(
+			hospitalB, 
+			product, 
+			REQUESTED_AMOUNT
+		);
+
+		Mockito.verify(mockedHospitalService, times(1)).save(hospitalA);
 	}
 	
 	@Test
