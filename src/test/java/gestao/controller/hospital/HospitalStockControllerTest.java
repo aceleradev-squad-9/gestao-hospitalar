@@ -228,13 +228,14 @@ public class HospitalStockControllerTest {
 	@Test
 	@DisplayName("Deve receber http status 404 ao tentar buscar os produtos de um hospital não cadastrado.")
 	public void shouldReceiveHospitalNotFoundWhenFindStockProducts() throws Exception {
+		Long NOT_EXISTING_ID = 1L;
 
 		Mockito.doThrow(new HospitalNotFoundException())
 			.when(hospitalService)
-			.verifyIfExistsById(isA(Long.class));
+			.verifyIfExistsById(NOT_EXISTING_ID);
 
 		MvcResult mvcResult = mvc.perform(
-				get(String.format("/hospital/%s/stock?page=0&size=1", 1L)
+				get(String.format("/hospital/%s/stock?page=0&size=1", NOT_EXISTING_ID)
 			)
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
