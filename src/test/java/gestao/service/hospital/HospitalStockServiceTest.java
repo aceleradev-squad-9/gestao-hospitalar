@@ -254,52 +254,88 @@ public class HospitalStockServiceTest {
 	}
 	
 	@Test
-	@DisplayName("Esse teste deve ser refeito. Deve transferir produtos entre um hospital e o segundo mais próximo caso o primeiro possua a quantidade mínima de produtos. ")
+	@DisplayName("Deve transferir produtos entre um hospital e o segundo mais próximo caso o primeiro não possua a quantidade mínima de produtos. ")
 	public void shouldOrderProductFromNearestHospitalWithStockGreaterThanMinimum() {
-		assertTrue(false);
-		// final Long HOSPITAL_ID = 1L;
-		// final Integer PRODUCT_AMOUNT = 10;
-		// final Integer MIN_PRODUCT_AMOUNT = 4;
-		// final Integer REQUESTED_AMOUNT = 5;
 		
-		// Hospital hospitalA = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID);
-		// Hospital hospitalB = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 1);
-		// Hospital hospitalC = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 2);
+		final Long HOSPITAL_ID = 1L;
+		final Integer PRODUCT_AMOUNT = 10;
+		final Integer MIN_PRODUCT_AMOUNT = 4;
+		final Integer REQUESTED_AMOUNT = 5;
+		
+		Hospital hospitalA = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID);
+		Hospital hospitalB = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 1);
+		Hospital hospitalC = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 2);
 
-		// Product product = Product.builder().withName("Produto")
-		// 		.withDescription("Descrição").build();
+		Product product = Product.builder()
+			.withName("Produto")
+			.withDescription("Descrição")
+			.build();
 		
-		// hospitalA.addProductInStock(product, PRODUCT_AMOUNT);
-		// hospitalB.addProductInStock(product, MIN_PRODUCT_AMOUNT);
-		// hospitalC.addProductInStock(product, PRODUCT_AMOUNT);
+		hospitalA.addProductInStock(product, PRODUCT_AMOUNT);
+		hospitalB.addProductInStock(product, MIN_PRODUCT_AMOUNT);
+		hospitalC.addProductInStock(product, PRODUCT_AMOUNT);
 		
-		// List<Hospital> hospitals = Arrays.asList(hospitalB, hospitalC);
+		List<Hospital> hospitals = Arrays.asList(hospitalB, hospitalC);
 		
-		// when(mockedHospitalGeoService.findNearestHospitals(hospitals, hospitalA.getAddress()))
-		// 		.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findAllByIdNot(HOSPITAL_ID))
-		// 		.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findById(HOSPITAL_ID))
-		// 		.thenReturn(Optional.of(hospitalA));
-		// when(mockedHospitalRepository.save(hospitalA))
-		// 		.thenReturn(hospitalA);
-		// when(mockedHospitalRepository.save(hospitalC))
-		// 		.thenReturn(hospitalC);
+		when(mockedHospitalService.findNearestHospitals(hospitalA))
+				.thenReturn(hospitals);
+
+		when(
+			mockedProductItemService.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalB, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT
+			)
+		).thenReturn(Boolean.FALSE);
+
+		when(
+			mockedProductItemService.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalC, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT
+			)
+		).thenReturn(Boolean.TRUE);
 		
-		// ProductItem increasedProductItem = this.hospitalService
-		// 		.orderProductFromNearestHospitals(HOSPITAL_ID, product, REQUESTED_AMOUNT);
+		when(mockedHospitalService.save(hospitalA))
+			.thenReturn(hospitalA);
+
+		ProductItem increasedProductItem = this.hospitalStockService
+      .transferProductItemFromTheFirstAbleHospital(
+				hospitals,
+        hospitalA, 
+        product, 
+        REQUESTED_AMOUNT
+      );
 		
-		// assertEquals(product.getName(), increasedProductItem.getProductName());
-		// assertEquals(product.getDescription(), increasedProductItem.getProductDescription());
-		// assertEquals(PRODUCT_AMOUNT + REQUESTED_AMOUNT, increasedProductItem.getAmount().intValue());
+		assertEquals(product.getName(), increasedProductItem.getProductName());
+		assertEquals(product.getDescription(), increasedProductItem.getProductDescription());
+		assertEquals(PRODUCT_AMOUNT + REQUESTED_AMOUNT, increasedProductItem.getAmount().intValue());
 		
-		// ProductItem reducedProductItem = hospitalC.findProductInStock(product);
-		// assertEquals(product.getName(), reducedProductItem.getProductName());
-		// assertEquals(product.getDescription(), reducedProductItem.getProductDescription());
-		// assertEquals(PRODUCT_AMOUNT - REQUESTED_AMOUNT, reducedProductItem.getAmount().intValue());
-		
-		// Mockito.verify(mockedHospitalRepository, times(1)).save(hospitalA);
-		// Mockito.verify(mockedHospitalRepository, times(1)).save(hospitalC);
+		Mockito.verify(mockedProductItemService, times(1))
+			.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalB, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT	
+			);
+
+		Mockito.verify(mockedProductItemService, times(1))
+			.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalC, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT	
+			);
+
+		Mockito.verify(mockedProductItemService, times(1)).reduceAmountOfItems(
+			hospitalC, 
+			product, 
+			REQUESTED_AMOUNT
+		);
+
+		Mockito.verify(mockedHospitalService, times(1)).save(hospitalA);
 	}
 	
 	@Test
