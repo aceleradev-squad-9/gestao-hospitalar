@@ -57,6 +57,7 @@ public class HospitalStockController {
 		@RequestParam int size,
 		@PathVariable Long hospitalId
 	) {
+		this.hospitalService.verifyIfExistsById(hospitalId);
 		return this.hospitalStockService.findAllHospitalProductItems(
 			hospitalId, 
 			PageRequest.of(page, size)
