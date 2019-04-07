@@ -70,4 +70,11 @@ public class PatientController {
 		return patientService.getPatient(hospital, person).convertToDto();
 	}
 
+	@GetMapping("/nearest")
+	@ResponseStatus(code = HttpStatus.FOUND)
+	public List<Hospital> findNearestHospital(@Valid @RequestBody LocalizationDto localizationDto) {
+		LatLng latLng = new LatLng(localizationDto.getLatitude(), localizationDto.getLongitude());
+		return hospitalGeoService.findNearestHospitalsByLocalization(hospitalService.findAll(), latLng);
+	}
+
 }

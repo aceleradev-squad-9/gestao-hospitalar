@@ -4,12 +4,14 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import com.google.maps.model.LatLng;
 
 import gestao.exception.hospital.NearestHospitalNotFoundException;
 import gestao.model.address.Address;
@@ -21,13 +23,25 @@ public class HospitalGeoService {
 
 	@Autowired
 	private GeoApi geoApi;
-
+	
 	@Cacheable(value = "nearestHospitals")
 	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
 		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(), destinations);
 
+		if (distances.size() == 0) {
+			throw new NearestHospitalNotFoundException();
+		}
+		
+		return this.getHospitalsSortedByDistance(hospitals, distances);
+	}
+	
+	public List<Hospital> findNearestHospitalsByLocalization(List<Hospital> hospitals, LatLng latLng) {
+		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
+		
+		List<Long> distances = geoApi.getDistances(latLng.toString(), destinations);
+		
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
