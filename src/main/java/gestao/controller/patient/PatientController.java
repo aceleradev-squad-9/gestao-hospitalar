@@ -3,17 +3,21 @@ package gestao.controller.patient;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import gestao.model.hospital.Hospital;
+import gestao.model.patient.LocalizationDto;
 import gestao.model.patient.Patient;
 import gestao.model.patient.PatientDto;
 import gestao.model.person.Person;
@@ -73,8 +77,7 @@ public class PatientController {
 	@GetMapping("/nearest")
 	@ResponseStatus(code = HttpStatus.FOUND)
 	public List<Hospital> findNearestHospital(@Valid @RequestBody LocalizationDto localizationDto) {
-		LatLng latLng = new LatLng(localizationDto.getLatitude(), localizationDto.getLongitude());
-		return hospitalGeoService.findNearestHospitalsByLocalization(hospitalService.findAll(), latLng);
+		return hospitalService.findNearestHospitals(localizationDto);
 	}
 
 }

@@ -14,7 +14,4 @@ public interface HospitalRepository extends PagingAndSortingRepository<Hospital,
 	List<Hospital> findAll();
 	
 	List<Hospital> findAllByIdNot(Long id);
-	
-	@Query("select count(p) from Hospital h JOIN h.patients p where p.time")
-	Long countPatientsOccupyingBeds(Long id);
 }

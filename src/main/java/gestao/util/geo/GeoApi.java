@@ -1,10 +1,8 @@
 package gestao.util.geo;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +14,7 @@ import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
 import com.google.maps.model.DistanceMatrixElementStatus;
+import com.google.maps.model.LatLng;
 
 /**
  * Classe responsável pelas requisições com as APIs do Google Geo.
@@ -50,22 +49,28 @@ public class GeoApi {
 		return distances;
 	}
 
-	public Integer getIndexOfMinorDistance(String origin, String[] destinations) {
-		List<Long> distances = this.getDistances(origin, destinations);
-		return IntStream.range(0, distances.size()).boxed().min(Comparator.comparingLong(distances::get)).orElse(-1);
+	public List<Long> getDistances(LatLng latLng, String[] destinations) {
+		List<Long> distances = new ArrayList<>();
+
+		try {
+			DistanceMatrixApiRequest request = this.getDistanceMatrixRequest();
+			DistanceMatrix distanceMatrix = request.origins(latLng).destinations(destinations).await();
+			distances = this.getDistances(distanceMatrix);
+		} catch (Exception e) {
+			LOG.error(e.getMessage(), e);
+		}
+
+		return distances;
 	}
 
 	private List<Long> getDistances(DistanceMatrix distanceMatrix) {
 
-		return Stream.of(distanceMatrix)
-			.flatMap((matrix) -> Stream.of(matrix.rows))
-			.flatMap((row) -> Stream.of(row.elements))
-			.map((element) -> {
-				if(DistanceMatrixElementStatus.OK.equals(element.status)){
-					return element.distance.inMeters;
-				}
-				return Long.MAX_VALUE;
-			})
-			.collect(Collectors.toList());
+		return Stream.of(distanceMatrix).flatMap((matrix) -> Stream.of(matrix.rows))
+				.flatMap((row) -> Stream.of(row.elements)).map((element) -> {
+					if (DistanceMatrixElementStatus.OK.equals(element.status)) {
+						return element.distance.inMeters;
+					}
+					return Long.MAX_VALUE;
+				}).collect(Collectors.toList());
 	}
 }

@@ -16,6 +16,7 @@ import com.google.maps.model.LatLng;
 import gestao.exception.hospital.NearestHospitalNotFoundException;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
+import gestao.model.patient.LocalizationDto;
 import gestao.util.geo.GeoApi;
 
 @Service
@@ -23,30 +24,34 @@ public class HospitalGeoService {
 
 	@Autowired
 	private GeoApi geoApi;
-	
+
 	@Cacheable(value = "nearestHospitals")
 	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
 		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(), destinations);
 
-		if (distances.size() == 0) {
-			throw new NearestHospitalNotFoundException();
-		}
-		
+		this.validateHospitalsDistances(distances);
+
 		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
-	
-	public List<Hospital> findNearestHospitalsByLocalization(List<Hospital> hospitals, LatLng latLng) {
+
+	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, LocalizationDto localizationDto) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
-		
-		List<Long> distances = geoApi.getDistances(latLng.toString(), destinations);
-		
+
+		List<Long> distances = geoApi
+				.getDistances(new LatLng(localizationDto.getLatitude(), 
+						localizationDto.getLongitude()), destinations);
+
+		this.validateHospitalsDistances(distances);
+
+		return this.getHospitalsSortedByDistance(hospitals, distances);
+	}
+
+	private void validateHospitalsDistances(List<Long> distances) {
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
-		
-		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 
 	public List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
