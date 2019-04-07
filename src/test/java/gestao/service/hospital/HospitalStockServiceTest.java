@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import gestao.exception.hospital.HospitalNotFoundException;
+import gestao.exception.hospital.NoHospitalAbleToTransferProductException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.helper.hospital.HospitalHelper;
 import gestao.model.address.Address;
@@ -339,52 +340,60 @@ public class HospitalStockServiceTest {
 	}
 	
 	@Test
-	@DisplayName("Esse teste deve ser refeito. Deve lançar a exceção NearestHospitalNotFoundException quando não existirem hospitais próximos com estoque disponível para transferẽncia.")
+	@DisplayName("Deve lançar a exceção NearestHospitalNotFoundException quando não existirem hospitais próximos com estoque disponível para transferẽncia.")
 	public void shouldThrowsNearestHospitalNotFound() {
-		assertTrue(false);
-		// final Long HOSPITAL_ID = 1L;
-		// final Integer PRODUCT_AMOUNT = 10;
-		// final Integer MIN_PRODUCT_AMOUNT = 4;
-		// final Integer REQUESTED_AMOUNT = 5;
+		final Long HOSPITAL_ID = 1L;
+		final Integer PRODUCT_AMOUNT = 10;
+		final Integer MIN_PRODUCT_AMOUNT = 4;
+		final Integer REQUESTED_AMOUNT = 5;
 		
-		// Hospital hospitalA = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID);
-		// Hospital hospitalB = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 1);
-		// Hospital hospitalC = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 2);
+		Hospital hospitalA = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID);
+		Hospital hospitalB = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 1);
+		Hospital hospitalC = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL_ID + 2);
 
-		// Product product = Product.builder().withName("Produto")
-		// 		.withDescription("Descrição").build();
+		Product product = Product.builder()
+			.withName("Produto")
+			.withDescription("Descrição")
+			.build();
 		
-		// hospitalA.addProductInStock(product, PRODUCT_AMOUNT);
-		// hospitalB.addProductInStock(product, MIN_PRODUCT_AMOUNT);
-		// hospitalC.addProductInStock(product, MIN_PRODUCT_AMOUNT);
+		hospitalA.addProductInStock(product, PRODUCT_AMOUNT);
+		hospitalB.addProductInStock(product, MIN_PRODUCT_AMOUNT);
+		hospitalC.addProductInStock(product, MIN_PRODUCT_AMOUNT);
 		
-		// List<Hospital> hospitals = Arrays.asList(hospitalB, hospitalC);
+		List<Hospital> hospitals = Arrays.asList(hospitalB, hospitalC);
 		
-		// when(mockedHospitalGeoService.findNearestHospitals(hospitals, hospitalA.getAddress()))
-		// 		.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findAllByIdNot(HOSPITAL_ID))
-		// 		.thenReturn(hospitals);
-		// when(mockedHospitalRepository.findById(HOSPITAL_ID))
-		// 		.thenReturn(Optional.of(hospitalA));
-		
-		// assertThrows(NearestHospitalNotFoundException.class,
-		// 		() -> this.hospitalService.orderProductFromNearestHospitals(HOSPITAL_ID, product, REQUESTED_AMOUNT));
-		
-		// ProductItem productItem = hospitalA.findProductInStock(product);
-		// assertEquals(product.getName(), productItem.getProductName());
-		// assertEquals(product.getDescription(), productItem.getProductDescription());
-		// assertEquals(PRODUCT_AMOUNT, productItem.getAmount());
-		
-		// productItem = hospitalB.findProductInStock(product);
-		// assertEquals(product.getName(), productItem.getProductName());
-		// assertEquals(product.getDescription(), productItem.getProductDescription());
-		// assertEquals(MIN_PRODUCT_AMOUNT, productItem.getAmount());
-		
-		// productItem = hospitalC.findProductInStock(product);
-		// assertEquals(product.getName(), productItem.getProductName());
-		// assertEquals(product.getDescription(), productItem.getProductDescription());
-		// assertEquals(MIN_PRODUCT_AMOUNT, productItem.getAmount());
-		
-		// Mockito.verify(mockedHospitalRepository, times(0)).save(Mockito.any());
+		when(mockedHospitalService.findNearestHospitals(hospitalA))
+				.thenReturn(hospitals);
+
+		when(
+			mockedProductItemService.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalB, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT
+			)
+		).thenReturn(Boolean.FALSE);
+
+		when(
+			mockedProductItemService.checkIfHospitalIsAbleToTransferProductItems(
+				hospitalC, 
+				product, 
+				REQUESTED_AMOUNT, 
+				Hospital.MIN_STOCK_AMOUNT
+			)
+		).thenReturn(Boolean.FALSE);
+
+		assertThrows(
+			NoHospitalAbleToTransferProductException.class,
+			() -> {
+				this.hospitalStockService
+					.transferProductItemFromTheFirstAbleHospital(
+						hospitals,
+						hospitalA, 
+						product, 
+						REQUESTED_AMOUNT
+					);
+			}
+		);
 	}
 }
