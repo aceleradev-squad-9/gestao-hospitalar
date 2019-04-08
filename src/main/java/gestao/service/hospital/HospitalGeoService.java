@@ -24,7 +24,7 @@ public class HospitalGeoService {
 	@Autowired
 	private GeoApi geoApi;
 
-	@Cacheable(value = "nearestHospitals")
+	@Cacheable(value = "hospitals")
 	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address dest) {
 		String[] origins = this.getHospitalsFormattedAddresses(hospitals);
 
