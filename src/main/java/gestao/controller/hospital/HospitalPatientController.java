@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,8 +74,12 @@ public class HospitalPatientController {
 	}
 
 	@GetMapping(value="/nearest", params = { "latitude", "longitude" })
-	public Hospital findNearestHospitalWithAvailableBeds(@Valid LocalizationDto localizationDto) {
+	public Hospital findNearestHospitalWithAvailableBeds(@Valid LocalizationDto localizationDto, BindingResult bindingResult) throws BindException {
 
+		if(bindingResult.hasErrors()) {
+			throw new BindException(bindingResult);
+		}
+		
 		return hospitalService.findNearestHospitals(localizationDto).stream()
 				.filter((hospital) -> hospital.hasAvailableBeds(this.patientService.countNumberOfBedsOccupied(hospital)))
 				.findFirst().orElseThrow(NoHospitalAbleToReceivePatientsException::new);
