@@ -131,13 +131,6 @@ public class HospitalGeoServiceTest {
         .stream()
         .toArray()
     );
-
-    assertArrayEquals(
-      sortedHospitals1.stream().toArray(), 
-      hospitalGeoService.sortHospitalsByDistanceFromAnOrigin(hospitals, origin.getAddress())
-        .stream()
-        .toArray()
-    );
   }
 
   @Test
@@ -156,16 +149,6 @@ public class HospitalGeoServiceTest {
       NearestHospitalNotFoundException.class, 
       () -> {
         hospitalGeoService.findNearestHospitals(
-          emptyHospitalList, 
-          origin
-        );
-      }
-    );
-
-    assertThrows(
-      NearestHospitalNotFoundException.class, 
-      () -> {
-        hospitalGeoService.sortHospitalsByDistanceFromAnOrigin(
           emptyHospitalList, 
           origin
         );
