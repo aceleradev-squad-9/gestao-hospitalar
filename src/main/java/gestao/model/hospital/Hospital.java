@@ -15,10 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import gestao.exception.hospital.HospitalNotAbleToReceivePatientsException;
@@ -65,18 +61,23 @@ public class Hospital {
 		return Collections.unmodifiableList(this.stock);
 	}
 	
-	public Patient checkIn(Long numberOfPatientsInBeds, Person person) {
+	public Patient checkIn(Long numberOfBedsOccupied,Person person) {
 		
-		if(numberOfPatientsInBeds >= maximumNumberOfBeds) {
+		if(!this.hasAvailableBeds(numberOfBedsOccupied)) {
 			throw new HospitalNotAbleToReceivePatientsException();
 		}
 		
 		Patient patient = Patient.builder().withHospital(this)
+				.withPerson(person)
 				.withTimeCheckIn(LocalDateTime.now()).build();
 		
 		this.patients.add(patient);
 		
 		return patient;
+	}
+	
+	public Boolean hasAvailableBeds(Long numberOfBedsOccupied) {
+		return numberOfBedsOccupied < maximumNumberOfBeds;
 	}
 
 	public ProductItem addProductInStock(Product product, Integer amount) {

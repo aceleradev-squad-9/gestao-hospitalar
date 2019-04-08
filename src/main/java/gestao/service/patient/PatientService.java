@@ -1,11 +1,11 @@
 package gestao.service.patient;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import gestao.exception.patient.PatientAlreadyHasCheckInException;
+import gestao.exception.patient.PatientAlreadyHasCheckInOnHospitalException;
 import gestao.exception.patient.PatientNotFoundException;
 import gestao.model.hospital.Hospital;
 import gestao.model.patient.Patient;
@@ -26,45 +26,37 @@ public class PatientService {
 
 	public Patient checkIn(Person person, Hospital hospital) {
 
-		Long numberOfPatientsInBeds = this.countNumberOfPatientsInBeds(hospital);
-		
-		if(existsPersonWithCheckInOnHospital(person, hospital)) {
-			throw new PatientAlreadyHasCheckInException();
+		if (existsPersonWithCheckInOnHospital(person, hospital)) {
+			throw new PatientAlreadyHasCheckInOnHospitalException();
 		}
-		
-		Patient patient = hospital.checkIn(numberOfPatientsInBeds, person);
+
+		Patient patient = hospital.checkIn(this.countNumberOfBedsOccupied(hospital), person);
 
 		return this.repository.save(patient);
 	}
 
-	public Patient checkOut(Person person, Hospital hospital) {
-		Patient patient = this.getPatient(hospital, person);
+	public Patient checkOut(Long patientId) {
+		Patient patient = this.findById(patientId);
 
 		patient.doCheckOut();
 
 		return this.repository.save(patient);
 	}
-	
+
 	private Boolean existsPersonWithCheckInOnHospital(Person person, Hospital hospital) {
 		return this.repository.existsByHospitalAndPersonAndTimeCheckOutIsNull(hospital, person);
 	}
-	
-	private Long countNumberOfPatientsInBeds(Hospital hospital) {
+
+	public Page<Patient> findHospitalPatients(Hospital hospital, Pageable pageable) {
+		return this.repository.findAllByHospitalAndTimeCheckOutIsNull(pageable, hospital);
+	}
+
+	public Long countNumberOfBedsOccupied(Hospital hospital) {
 		return this.repository.countByHospitalAndTimeCheckOutIsNull(hospital);
 	}
 
-	public List<Patient> getHospitalPatients(Hospital hospital) {
-
-		return this.repository.findAllByHospitalAndTimeCheckOutIsNull(hospital);
-	}
-	
 	public Patient findById(Long id) {
 		return this.repository.findById(id).orElseThrow(PatientNotFoundException::new);
-	}
-	
-	public Patient getPatient(Hospital hospital, Person person) {
-		return this.repository.findByHospitalAndPersonAndTimeCheckOutIsNull(hospital, person)
-				.orElseThrow(PatientNotFoundException::new);
 	}
 
 }

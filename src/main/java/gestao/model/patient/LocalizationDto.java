@@ -1,13 +1,13 @@
 package gestao.model.patient;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class LocalizationDto {
 	
-	@NotBlank(message = "Favor informar a latitude.")
+	@NotNull(message = "Favor informar a latitude.")
 	private Double latitude;
 	
-	@NotBlank(message = "Favor informar a longitue.")
+	@NotNull(message = "Favor informar a longitue.")
 	private Double longitude;
 
 	public Double getLatitude() {

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.hospital.HospitalNotFoundException;
+import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
 import gestao.model.patient.LocalizationDto;
@@ -59,12 +60,15 @@ public class HospitalService {
 
 	public List<Hospital> findNearestHospitals(Hospital hospital) {
 		List<Hospital> hospitals = this.hospitalRepository.findAllByIdNot(hospital.getId());
-
 		return this.hospitalGeoService.findNearestHospitals(hospitals, hospital.getAddress());
 	}
 
 	public List<Hospital> findNearestHospitals(LocalizationDto localizationDto) {
-
 		return this.hospitalGeoService.findNearestHospitals(this.findAll(), localizationDto);
 	}
+
+	public List<Hospital> findNearestHospitals(Address address) {
+		return this.hospitalGeoService.findNearestHospitals(this.findAll(), address);
+	}
+
 }

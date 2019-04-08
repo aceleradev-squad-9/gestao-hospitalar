@@ -1,9 +1,10 @@
 package gestao.repository.patient;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import gestao.model.hospital.Hospital;
@@ -17,15 +18,11 @@ import gestao.model.person.Person;
  *
  */
 @Repository
-public interface PatientRepository extends CrudRepository<Patient, Long> {
-
-	List<Patient> findAll();
-	
-	List<Patient> findAllByIdNot(Long id);
+public interface PatientRepository extends PagingAndSortingRepository<Patient, Long> {
 	
 	Long countByHospitalAndTimeCheckOutIsNull(Hospital hospital);
 
-	List<Patient> findAllByHospitalAndTimeCheckOutIsNull(Hospital hospital);
+	Page<Patient> findAllByHospitalAndTimeCheckOutIsNull(Pageable pageable, Hospital hospital);
 	
 	Optional<Patient> findByHospitalAndPersonAndTimeCheckOutIsNull(Hospital hospital, Person person);
 

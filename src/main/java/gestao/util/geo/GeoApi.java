@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.google.maps.DistanceMatrixApiRequest;
@@ -35,6 +36,7 @@ public class GeoApi {
 		return new DistanceMatrixApiRequest(context);
 	}
 
+	@Cacheable(value = "nearestHospitals")
 	public List<Long> getDistances(String origin, String[] destinations) {
 		List<Long> distances = new ArrayList<>();
 

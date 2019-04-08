@@ -10,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import gestao.model.BaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import gestao.model.hospital.Hospital;
 import gestao.model.person.Person;
+import gestao.util.jackson.DateDeserializer;
+import gestao.util.jackson.DateSerializer;
 
 @Entity
-public class Patient extends BaseEntity {
+public class Patient {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +30,8 @@ public class Patient extends BaseEntity {
 	private Person person;
 
 	@NotNull(message = "A hora do check-in é obrigatória.")
+	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonSerialize(using = DateSerializer.class)
 	private LocalDateTime timeCheckIn;
 
 	private LocalDateTime timeCheckOut;
@@ -38,11 +44,10 @@ public class Patient extends BaseEntity {
 
 	}
 
-	Patient(Long id, Person person, LocalDateTime timeCheckIn, LocalDateTime timeCheckOut, Hospital hospital) {
+	Patient(Long id, Person person, LocalDateTime timeCheckIn, Hospital hospital) {
 		this.id = id;
 		this.person = person;
 		this.timeCheckIn = timeCheckIn;
-		this.timeCheckOut = timeCheckOut;
 		this.hospital = hospital;
 	}
 
@@ -117,7 +122,7 @@ public class Patient extends BaseEntity {
 		}
 
 		public Patient build() {
-			return new Patient(this.id, person, timeCheckIn, null, hospital);
+			return new Patient(id, person, timeCheckIn, hospital);
 		}
 	}
 }

@@ -3,7 +3,15 @@ package gestao.model.patient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import gestao.model.person.Gender;
+import gestao.util.jackson.DateDeserializer;
+import gestao.util.jackson.DateSerializer;
+import gestao.util.jackson.DateTimeSerializer;
 
 public class PatientDto {
 
@@ -12,12 +20,19 @@ public class PatientDto {
 	private String name;
 
 	private String cpf;
-
+	
+	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonSerialize(using = DateSerializer.class)
 	private LocalDate dateOfBirth;
 
 	private Gender gender;
 
+	@JsonSerialize(using = DateTimeSerializer.class)
 	private LocalDateTime timeCheckIn;
+	
+	@JsonSerialize(using = DateTimeSerializer.class)
+	@JsonInclude(Include.NON_NULL)
+	private LocalDateTime timeCheckOut;
 
 	PatientDto(Long id, String name, String cpf, LocalDate dateOfBirth, Gender gender, LocalDateTime timeCheckIn) {
 		this.id = id;
