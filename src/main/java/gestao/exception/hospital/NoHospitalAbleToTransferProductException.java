@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NoHospitalAbleToTransferProductException extends RuntimeException {
 
 	private static final long serialVersionUID = -7187717322693216670L;
-	private static final String NO_PRODUCT_ABLE_TO_TRANSFER_PRODUCT = "Não foi possível encontrar nenhum hospital para transferir o produto.";
+	private static final String NO_PRODUCT_ABLE_TO_TRANSFER_PRODUCT = "Não foi possível encontrar um hospital para transferir o produto.";
 	
 	public NoHospitalAbleToTransferProductException() {
 		super(NO_PRODUCT_ABLE_TO_TRANSFER_PRODUCT);

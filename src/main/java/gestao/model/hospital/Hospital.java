@@ -1,5 +1,6 @@
 package gestao.model.hospital;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,10 +17,12 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import gestao.exception.hospital.NoHospitalAbleToReceivePatientsException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
 import gestao.model.bloodbank.BloodBankItem;
 import gestao.model.patient.Patient;
+import gestao.model.person.Person;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 
@@ -56,6 +59,25 @@ public class Hospital {
 
 	public List<ProductItem> getStock() {
 		return Collections.unmodifiableList(this.stock);
+	}
+	
+	public Patient checkIn(Long numberOfBedsOccupied,Person person) {
+		
+		if(!this.hasAvailableBeds(numberOfBedsOccupied)) {
+			throw new NoHospitalAbleToReceivePatientsException();
+		}
+		
+		Patient patient = Patient.builder().withHospital(this)
+				.withPerson(person)
+				.withTimeCheckIn(LocalDateTime.now()).build();
+		
+		this.patients.add(patient);
+		
+		return patient;
+	}
+	
+	public Boolean hasAvailableBeds(Long numberOfBedsOccupied) {
+		return numberOfBedsOccupied < maximumNumberOfBeds;
 	}
 
 	public ProductItem addProductInStock(Product product, Integer amount) {
