@@ -45,19 +45,4 @@ public class HospitalGeoService {
 	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
 		return hospitals.stream().map(hospital -> hospital.getAddress().getFormattedAddress()).toArray(String[]::new);
 	}
-
-	public List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
-		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(),
-				this.getHospitalsFormattedAddresses(hospitals));
-
-		if (distances.size() == 0) {
-			throw new NearestHospitalNotFoundException();
-		}
-
-		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
-		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
-
-		return IntStream.range(0, hospitals.size()).boxed().sorted(Comparator.comparing(arrayOfDistances::get))
-				.<Hospital>map(i -> arrayOfHospitals.get(i)).collect(Collectors.toList());
-	}
 }
