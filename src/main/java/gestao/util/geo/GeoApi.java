@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import gestao.exception.hospital.NoHospitalAbleToTransferProductException;
+
 import com.google.maps.DistanceMatrixApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
@@ -36,12 +38,12 @@ public class GeoApi {
 		return new DistanceMatrixApiRequest(context);
 	}
 
-	public List<Long> getDistances(String origin, String[] destinations) {
+	public List<Long> getDistances(String dest, String[] origins) {
 		List<Long> distances = new ArrayList<>();
 
 		try {
 			DistanceMatrixApiRequest request = this.getDistanceMatrixRequest();
-			DistanceMatrix distanceMatrix = request.origins(origin).destinations(destinations).await();
+			DistanceMatrix distanceMatrix = request.origins(origins).destinations(dest).await();
 			distances = this.getDistances(distanceMatrix);
 		} catch (Exception e) {
 			LOG.error(e.getMessage(), e);
