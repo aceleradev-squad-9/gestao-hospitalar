@@ -2,7 +2,6 @@ package gestao.controller.hospital;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -229,13 +228,14 @@ public class HospitalStockControllerTest {
 	@Test
 	@DisplayName("Deve receber http status 404 ao tentar buscar os produtos de um hospital não cadastrado.")
 	public void shouldReceiveHospitalNotFoundWhenFindStockProducts() throws Exception {
+		Long NOT_EXISTING_ID = 1L;
 
 		Mockito.doThrow(new HospitalNotFoundException())
 			.when(hospitalService)
-			.verifyIfExistsById(isA(Long.class));
+			.verifyIfExistsById(NOT_EXISTING_ID);
 
 		MvcResult mvcResult = mvc.perform(
-				get(String.format("/hospital/%s/stock?page=0&size=1", 1L)
+				get(String.format("/hospital/%s/stock?page=0&size=1", NOT_EXISTING_ID)
 			)
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
@@ -308,85 +308,126 @@ public class HospitalStockControllerTest {
 	}
 
 	@Test
-	@DisplayName("Esse teste deve ser refatorado: Deve receber um produto do estoque quando solicitado de outro hospital.")
+	@DisplayName("Deve receber um produto do estoque quando solicitado de outro hospital.")
 	public void shouldReceiveProductWhenOrderProductFromHospital() throws Exception {
-		assertTrue(false);
-		// Long hospitalId = 1L;
-		// Long productId = 1L;
+		Long hospitalId = 1L;
+		Long productId = 1L;
 
-		// Hospital hospital = Mockito.mock(Hospital.class);
+		Hospital hospital = Mockito.mock(Hospital.class);
 
-		// Product product = Product.builder().withName("Product A").withDescription("Descrição").build();
+		Product product = Product.builder()
+			.withName("Product A")
+			.withDescription("Descrição")
+			.build();
 
-		// ProductItem productItem = ProductItem.builder().withAmount(10).withHospital(hospital).withProduct(product)
-		// 		.build();
-		// ProductItemDto productItemDto = productItem.convertToDto();
+		ProductItem productItem = ProductItem.builder()
+			.withAmount(10)
+			.withHospital(hospital)
+			.withProduct(product)
+			.build();
 
-		// Mockito.when(productService.findById(productId)).thenReturn(product);
-		// Mockito.when(hospitalStockService.orderProductFromNearestHospitals(hospitalId, product, productItem.getAmount()))
-		// 		.thenReturn(productItem);
+		ProductItemDto productItemDto = productItem.convertToDto();
 
-		// ObjectMapper objectMapper = new ObjectMapper();
+		List<Hospital> nearestHospitals = Arrays.asList(
+			Mockito.mock(Hospital.class)
+		);
+		Mockito.when(hospitalService.findById(hospitalId))
+			.thenReturn(hospital);
 
-		// String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+		Mockito.when(hospitalService.findNearestHospitals(hospital))
+			.thenReturn(nearestHospitals);
 
-		// MvcResult mvcResult = mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
-		// 		.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-		// 		.andExpect(status().isOk()).andReturn();
+		Mockito.when(productService.findById(productId)).thenReturn(product);
+		
+		Mockito.when(
+			hospitalStockService.transferProductItemFromTheFirstAbleHospital(
+				nearestHospitals,
+				hospital, 
+				product, 
+				productItem.getAmount()
+			)
+		)
+		.thenReturn(productItem);
 
-		// assertEquals(objectMapper.writeValueAsString(productItem.convertToDto()),
-		// 		mvcResult.getResponse().getContentAsString());
+		ObjectMapper objectMapper = new ObjectMapper();
+		String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+
+		MvcResult mvcResult = mvc.perform(
+				put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId)
+			)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(productItemDtoJson)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk()).andReturn();
+
+		assertEquals(
+			objectMapper.writeValueAsString(productItem.convertToDto()),
+			mvcResult.getResponse().getContentAsString()
+		);
 	}
 
 	@Test
-	@DisplayName("Esse teste deve ser refatorado: Deve receber http status 404 ao solicitar para outro hospital, um produto não cadastrado.")
+	@DisplayName("Deve receber http status 404 ao solicitar para outro hospital, um produto não cadastrado.")
 	public void shouldReceiveProductNotFoundWhenOrderProductFromHospital() throws Exception {
-		assertTrue(false);
-		// Long hospitalId = 1L;
-		// Long productId = 1L;
+		Long hospitalId = 1L;
+		Long productId = 1L;
 
-		// ProductItemDto productItemDto = new ProductItemDto();
-		// productItemDto.setAmount(10);
+		ProductItemDto productItemDto = new ProductItemDto();
+		productItemDto.setAmount(10);
 
-		// Mockito.when(productService.findById(productId)).thenThrow(new ProductNotFoundException());
+		Mockito.when(productService.findById(productId))
+			.thenThrow(new ProductNotFoundException());
 
-		// ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		// String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+		String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
 
-		// MvcResult mvcResult = mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
-		// 		.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-		// 		.andExpect(status().isNotFound()).andReturn();
+		MvcResult mvcResult = mvc.perform(
+			put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId)
+		)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(productItemDtoJson)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isNotFound()).andReturn();
 
-		// assertEquals("", mvcResult.getResponse().getContentAsString());
+		assertEquals("", mvcResult.getResponse().getContentAsString());
 
-		// Mockito.verify(hospitalService, Mockito.times(0)).orderProductFromNearestHospitals(Mockito.any(), Mockito.any(),
-		// 		Mockito.anyInt());
+		Mockito.verify(hospitalStockService, Mockito.times(0))
+			.transferProductItemFromTheFirstAbleHospital(
+				Mockito.any(),
+				Mockito.any(), 
+				Mockito.any(),
+				Mockito.anyInt()
+			);
 	}
 
 	@Test
-	@DisplayName("Esse teste deve ser refatorado: Deve receber http status 400 ao solicitar para outro hospital uma quantidade inválida de um produto.")
+	@DisplayName("Deve receber http status 400 ao solicitar para outro hospital uma quantidade inválida de um produto.")
 	public void shouldReceiveValidationErrorsWhenOrderProductFromHospitalWithInvalidAmount() throws Exception {
-		assertTrue(false);
-		// Long hospitalId = 1L;
-		// Long productId = 1L;
+		Long hospitalId = 1L;
+		Long productId = 1L;
 
-		// ProductItemDto productItemDto = new ProductItemDto();
-		// productItemDto.setAmount(-1);
+		ProductItemDto productItemDto = new ProductItemDto();
+		productItemDto.setAmount(-1);
 
-		// ObjectMapper objectMapper = new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		// String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
+		String productItemDtoJson = objectMapper.writeValueAsString(productItemDto);
 
-		// mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
-		// 		.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
-		// 		.andExpect(status().isBadRequest())
-		// 		.andExpect(jsonPath("$.errors.['amount'][0]", is("A quantidade do produto deve ser maior que 0")))
-		// 		.andReturn();
+		mvc.perform(put(String.format("/hospital/%s/stock/order/%s", hospitalId, productId))
+				.contentType(MediaType.APPLICATION_JSON).content(productItemDtoJson).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.errors.['amount'][0]", is("A quantidade do produto deve ser maior que 0")))
+				.andReturn();
 
-		// Mockito.verify(productService, Mockito.times(0)).findById(Mockito.anyLong());
-		// Mockito.verify(hospitalService, Mockito.times(0)).orderProductFromNearestHospitals(Mockito.any(), Mockito.any(),
-		// 		Mockito.anyInt());
+		Mockito.verify(productService, Mockito.times(0)).findById(Mockito.anyLong());
+		Mockito.verify(hospitalStockService, Mockito.times(0))
+			.transferProductItemFromTheFirstAbleHospital(
+				Mockito.any(),
+				Mockito.any(), 
+				Mockito.any(),
+				Mockito.anyInt()
+			);
 	}
 
 }
