@@ -52,11 +52,6 @@ public class GeoApi {
 		return distances;
 	}
 
-	public Integer getIndexOfMinorDistance(String origin, String[] destinations) {
-		List<Long> distances = this.getDistances(origin, destinations);
-		return IntStream.range(0, distances.size()).boxed().min(Comparator.comparingLong(distances::get)).orElse(-1);
-	}
-
 	private List<Long> getDistances(DistanceMatrix distanceMatrix) {
 
 		return Stream.of(distanceMatrix)
