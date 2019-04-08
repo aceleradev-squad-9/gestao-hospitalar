@@ -23,10 +23,10 @@ public class HospitalGeoService {
 	private GeoApi geoApi;
 
 	@Cacheable(value = "nearestHospitals")
-	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
-		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
+	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address dest) {
+		String[] origins = this.getHospitalsFormattedAddresses(hospitals);
 
-		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(), destinations);
+		List<Long> distances = geoApi.getDistances(dest.getFormattedAddress(), origins);
 
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
