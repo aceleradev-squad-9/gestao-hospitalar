@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import gestao.exception.hospital.HospitalNotAbleToReceivePatientsException;
+import gestao.exception.hospital.NoHospitalAbleToReceivePatientsException;
 import gestao.model.hospital.Hospital;
 import gestao.model.patient.LocalizationDto;
 import gestao.model.patient.Patient;
@@ -76,7 +76,7 @@ public class HospitalPatientController {
 
 		return hospitalService.findNearestHospitals(localizationDto).stream()
 				.filter((hospital) -> hospital.hasAvailableBeds(this.patientService.countNumberOfBedsOccupied(hospital)))
-				.findFirst().orElseThrow(HospitalNotAbleToReceivePatientsException::new);
+				.findFirst().orElseThrow(NoHospitalAbleToReceivePatientsException::new);
 	}
 
 }

@@ -10,6 +10,11 @@ public class LocalizationDto {
 	@NotNull(message = "Favor informar a longitue.")
 	private Double longitude;
 
+	public LocalizationDto(Double latitude, Double longitude) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
 	public Double getLatitude() {
 		return latitude;
 	}

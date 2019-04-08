@@ -2,6 +2,7 @@ package gestao.service.hospital;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,6 +26,7 @@ import gestao.helper.hospital.HospitalHelper;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
+import gestao.model.patient.LocalizationDto;
 import gestao.repository.hospital.HospitalRepository;
 
 @SpringBootTest
@@ -536,5 +539,22 @@ public class HospitalServiceTest {
         hospital.getAddress()
       )
     );
+  }
+  
+	@Test
+	@DisplayName("Deve retornar uma lista de hospitais ordenados pela distâncias entre estes e uma localização composta por latitude e longitude.")
+	public void shouldReturnAListOfHospitalsSortedByTheirDistanceFromAnLocalization() {
+
+		List<Hospital> hospitalList = Arrays.asList(
+				HospitalHelper.getAHospitalWithValidProperties(1L),
+				HospitalHelper.getAHospitalWithValidProperties(2L));
+
+		LocalizationDto localizationDto = new LocalizationDto(-8.049290, -34.945709);
+
+		Mockito.when(mockedHospitalRepository.findAll()).thenReturn(hospitalList);
+
+		when(mockedHospitalGeoService.findNearestHospitals(hospitalList, localizationDto)).thenReturn(hospitalList);
+
+		assertIterableEquals(hospitalList, hospitalService.findNearestHospitals(localizationDto));
   }
 }

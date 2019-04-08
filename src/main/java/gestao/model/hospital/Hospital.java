@@ -17,7 +17,7 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import gestao.exception.hospital.HospitalNotAbleToReceivePatientsException;
+import gestao.exception.hospital.NoHospitalAbleToReceivePatientsException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
 import gestao.model.bloodbank.BloodBankItem;
@@ -64,7 +64,7 @@ public class Hospital {
 	public Patient checkIn(Long numberOfBedsOccupied,Person person) {
 		
 		if(!this.hasAvailableBeds(numberOfBedsOccupied)) {
-			throw new HospitalNotAbleToReceivePatientsException();
+			throw new NoHospitalAbleToReceivePatientsException();
 		}
 		
 		Patient patient = Patient.builder().withHospital(this)
