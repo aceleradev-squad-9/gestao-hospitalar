@@ -1,6 +1,5 @@
 package gestao.service.hospital;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gestao.exception.hospital.NoHospitalAbleToTransferProductException;
 import gestao.model.hospital.Hospital;
-import gestao.model.product.BloodBankItem;
-import gestao.model.product.BloodType;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
 import gestao.model.product.ProductItemDto;
@@ -41,36 +38,17 @@ public class HospitalStockService {
 		Hospital hospital = this.hospitalService.findById(hospitalId);
 		return hospital.findProductInStock(product);
 	}
-
-	public BloodBankItem addBloodBankInStock(Long hospitalId, Product product, Integer amount, LocalDateTime dateDonation, BloodType bloodType) {
-
-		Hospital hospital = this.hospitalService.findById(hospitalId);
-
-		BloodBankItem bloodBankItem = hospital.addBloodBankInStock(product, amount, dateDonation, bloodType);
-
-		this.hospitalService.save(hospital);
-
-		return bloodBankItem;
-	}
-
-	public BloodBankItem findBloodBankInStock(Long hospitalId, Product product) {
-		Hospital hospital = this.hospitalService.findById(hospitalId);
-		return hospital.findBloodBankInStock(product);
-	}
-
-	public BloodBankItem findBloodBankInStockByType(Long hospitalId, BloodType bloodType) {
-//		Hospital hospital = this.findById(hospitalId);
-
-		return null;
-	}
 	
 	public Page<ProductItemDto> findAllHospitalProductItems(
-		Long hospitalId, 
+		Long hospitalId,
 		Pageable pageable
-	) {
-		return productItemService.findAllHospitalProductItems(hospitalId, pageable);
+	){
+		return this.productItemService.findAllHospitalProductItems(
+			hospitalId, 
+			pageable
+		);
 	}
-
+	
 	@Transactional
   public ProductItem transferProductItemFromTheFirstAbleHospital(
 		List<Hospital> hospitals,

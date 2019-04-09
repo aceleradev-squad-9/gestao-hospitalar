@@ -1,19 +1,21 @@
 package gestao.service.hospital;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.maps.model.LatLng;
+
 import gestao.exception.hospital.NearestHospitalNotFoundException;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
+import gestao.model.patient.LocalizationDto;
 import gestao.util.geo.GeoApi;
 
 @Service
@@ -23,16 +25,32 @@ public class HospitalGeoService {
 	private GeoApi geoApi;
 
 	@Cacheable(value = "nearestHospitals")
-	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address origin) {
+	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, Address dest) {
+		String[] origins = this.getHospitalsFormattedAddresses(hospitals);
+
+		List<Long> distances = geoApi.getDistances(dest.getFormattedAddress(), origins);
+
+		this.validateHospitalsDistances(distances);
+
+		return this.getHospitalsSortedByDistance(hospitals, distances);
+	}
+
+	public List<Hospital> findNearestHospitals(List<Hospital> hospitals, LocalizationDto localizationDto) {
 		String[] destinations = this.getHospitalsFormattedAddresses(hospitals);
 
-		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(), destinations);
+		List<Long> distances = geoApi
+				.getDistances(new LatLng(localizationDto.getLatitude(), 
+						localizationDto.getLongitude()), destinations);
 
+		this.validateHospitalsDistances(distances);
+
+		return this.getHospitalsSortedByDistance(hospitals, distances);
+	}
+
+	private void validateHospitalsDistances(List<Long> distances) {
 		if (distances.size() == 0) {
 			throw new NearestHospitalNotFoundException();
 		}
-		
-		return this.getHospitalsSortedByDistance(hospitals, distances);
 	}
 
 	public List<Hospital> getHospitalsSortedByDistance(List<Hospital> hospitals, List<Long> distances) {
@@ -44,20 +62,5 @@ public class HospitalGeoService {
 
 	public String[] getHospitalsFormattedAddresses(List<Hospital> hospitals) {
 		return hospitals.stream().map(hospital -> hospital.getAddress().getFormattedAddress()).toArray(String[]::new);
-	}
-
-	public List<Hospital> sortHospitalsByDistanceFromAnOrigin(List<Hospital> hospitals, Address origin) {
-		List<Long> distances = geoApi.getDistances(origin.getFormattedAddress(),
-				this.getHospitalsFormattedAddresses(hospitals));
-
-		if (distances.size() == 0) {
-			throw new NearestHospitalNotFoundException();
-		}
-
-		ArrayList<Long> arrayOfDistances = new ArrayList<>(distances);
-		ArrayList<Hospital> arrayOfHospitals = new ArrayList<>(hospitals);
-
-		return IntStream.range(0, hospitals.size()).boxed().sorted(Comparator.comparing(arrayOfDistances::get))
-				.<Hospital>map(i -> arrayOfHospitals.get(i)).collect(Collectors.toList());
 	}
 }

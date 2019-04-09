@@ -26,7 +26,7 @@ public interface ProductItemRepository extends PagingAndSortingRepository<Produc
 	Page<ProductItem> findAllByHospitalId(Long hospitalId, Pageable pageable);
 
 	@Query(
-		"SELECT p FROM ProductItem p WHERE p.hospital.id = ?1 AND p.product.id = ?2 AND p.amount-?3 > ?4"
+		"SELECT p FROM ProductItem p WHERE p.hospital.id = ?1 AND p.product.id = ?2 AND p.amount-?3 >= ?4"
 	)
 	ProductItem checkIfAHospitalIsAbleToTransferItemsOfAProduct(
 		Long hospitalId,

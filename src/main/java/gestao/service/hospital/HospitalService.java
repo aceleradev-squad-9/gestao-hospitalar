@@ -11,6 +11,7 @@ import gestao.exception.hospital.HospitalNotFoundException;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
 import gestao.model.hospital.HospitalDto;
+import gestao.model.patient.LocalizationDto;
 import gestao.repository.hospital.HospitalRepository;
 
 @Service
@@ -43,7 +44,7 @@ public class HospitalService {
 		return hospitalRepository.findAll(pageable);
 	}
 
-	public List<Hospital> findAll(){
+	public List<Hospital> findAll() {
 		return hospitalRepository.findAll();
 	}
 
@@ -59,12 +60,15 @@ public class HospitalService {
 
 	public List<Hospital> findNearestHospitals(Hospital hospital) {
 		List<Hospital> hospitals = this.hospitalRepository.findAllByIdNot(hospital.getId());
-
 		return this.hospitalGeoService.findNearestHospitals(hospitals, hospital.getAddress());
 	}
 
-	public List<Hospital> findNearestHospitals(Address origin) {
-
-		return this.hospitalGeoService.findNearestHospitals(this.findAll(), origin);
+	public List<Hospital> findNearestHospitals(LocalizationDto localizationDto) {
+		return this.hospitalGeoService.findNearestHospitals(this.findAll(), localizationDto);
 	}
+
+	public List<Hospital> findNearestHospitals(Address address) {
+		return this.hospitalGeoService.findNearestHospitals(this.findAll(), address);
+	}
+
 }

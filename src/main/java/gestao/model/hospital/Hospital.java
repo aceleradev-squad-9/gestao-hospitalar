@@ -17,14 +17,14 @@ import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import gestao.exception.hospital.NoHospitalAbleToReceivePatientsException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
-import gestao.model.product.BloodBankItem;
+import gestao.model.bloodbank.BloodBankItem;
 import gestao.model.patient.Patient;
-import gestao.model.product.BloodType;
+import gestao.model.person.Person;
 import gestao.model.product.Product;
 import gestao.model.product.ProductItem;
-import org.hibernate.annotations.Where;
 
 @Entity
 public class Hospital {
@@ -47,12 +47,9 @@ public class Hospital {
 
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
-	@Where(clause = "dtype = 'ProductItem'")
 	private List<ProductItem> stock = new ArrayList<>();
 
-	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
-	@Where(clause = "dtype = 'BloodBankItem'")
+	@OneToMany(mappedBy = "hospital")
 	private List<BloodBankItem> bloodBank = new ArrayList<>();
 
 	public static final Integer MIN_STOCK_AMOUNT = 4;
@@ -63,9 +60,24 @@ public class Hospital {
 	public List<ProductItem> getStock() {
 		return Collections.unmodifiableList(this.stock);
 	}
-
-	public List<BloodBankItem> getBloodBank() {
-		return Collections.unmodifiableList(this.bloodBank);
+	
+	public Patient checkIn(Long numberOfBedsOccupied,Person person) {
+		
+		if(!this.hasAvailableBeds(numberOfBedsOccupied)) {
+			throw new NoHospitalAbleToReceivePatientsException();
+		}
+		
+		Patient patient = Patient.builder().withHospital(this)
+				.withPerson(person)
+				.withTimeCheckIn(LocalDateTime.now()).build();
+		
+		this.patients.add(patient);
+		
+		return patient;
+	}
+	
+	public Boolean hasAvailableBeds(Long numberOfBedsOccupied) {
+		return numberOfBedsOccupied < maximumNumberOfBeds;
 	}
 
 	public ProductItem addProductInStock(Product product, Integer amount) {
@@ -81,31 +93,13 @@ public class Hospital {
 		return productItem;
 	}
 
-	public BloodBankItem addBloodBankInStock(Product product, Integer amount, LocalDateTime dateDonation, BloodType bloodType) {
-
-		BloodBankItem bloodBankItem = (BloodBankItem) BloodBankItem.builder().withDateDonation(dateDonation).withBloodType(bloodType).withAmount(amount).withProduct(product).withHospital(this).build();
-		
-		this.bloodBank.add(bloodBankItem);
-
-		return bloodBankItem;
-	}
-
 	private Optional<ProductItem> getProductItem(Product product) {
 
 		return this.stock.stream().filter((item) -> item.getProduct().equals(product)).findFirst();
 	}
 
-	private Optional<BloodBankItem> getBloodBankItem(Product product) {
-
-		return this.bloodBank.stream().filter((item) -> item.getProduct().equals(product)).findFirst();
-	}
-
 	public ProductItem findProductInStock(Product product) {
 		return this.getProductItem(product).orElseThrow(() -> new ProductNotFoundInHospitalStockException());
-	}
-
-	public BloodBankItem findBloodBankInStock(Product product) {
-		return this.getBloodBankItem(product).orElseThrow(() -> new ProductNotFoundInHospitalStockException());
 	}
 
 	public Long getId() {

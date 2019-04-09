@@ -16,10 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import com.google.maps.model.LatLng;
+
 import gestao.exception.hospital.NearestHospitalNotFoundException;
 import gestao.helper.hospital.HospitalHelper;
 import gestao.model.address.Address;
 import gestao.model.hospital.Hospital;
+import gestao.model.patient.LocalizationDto;
 import gestao.util.geo.GeoApi;
 
 @SpringBootTest
@@ -128,13 +131,6 @@ public class HospitalGeoServiceTest {
         .stream()
         .toArray()
     );
-
-    assertArrayEquals(
-      sortedHospitals1.stream().toArray(), 
-      hospitalGeoService.sortHospitalsByDistanceFromAnOrigin(hospitals, origin.getAddress())
-        .stream()
-        .toArray()
-    );
   }
 
   @Test
@@ -158,15 +154,37 @@ public class HospitalGeoServiceTest {
         );
       }
     );
-
-    assertThrows(
-      NearestHospitalNotFoundException.class, 
-      () -> {
-        hospitalGeoService.sortHospitalsByDistanceFromAnOrigin(
-          emptyHospitalList, 
-          origin
-        );
-      }
-    );
   }
+  
+	@Test
+	@DisplayName("Deve ordenar uma lista de hospitais de acordo com a distância para uma localização composta por latitude e longitude")
+	public void shouldSortAListOfHospitalsAccordingToTheDistanceToAnLocalization() {
+		List<Hospital> hospitals = HospitalHelper.getListOfValidHospitals(10);
+
+		LocalizationDto localizationDto = new LocalizationDto(-8.049290, -34.945709);
+
+		List<Long> distanceToTheOrigin = Arrays.asList(
+				234L,
+				123L,
+				21L,
+				55L,
+				500L,
+				321L,
+				21L,
+				500L,
+				233L,
+				600L 
+		);
+
+		List<Hospital> sortedHospitals = Arrays.asList(
+				hospitals.get(2), hospitals.get(6), hospitals.get(3),
+				hospitals.get(1), hospitals.get(8), hospitals.get(0), 
+				hospitals.get(5), hospitals.get(4), hospitals.get(7), 
+				hospitals.get(9));
+
+		when(mockedGeoApiService.getDistances(isA(LatLng.class), isA(String[].class))).thenReturn(distanceToTheOrigin);
+
+		assertArrayEquals(sortedHospitals.stream().toArray(),
+				hospitalGeoService.findNearestHospitals(hospitals, localizationDto).stream().toArray());
+	}
 }
