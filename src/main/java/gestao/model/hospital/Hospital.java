@@ -1,5 +1,6 @@
 package gestao.model.hospital;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gestao.exception.hospital.NoHospitalAbleToReceivePatientsException;
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
 import gestao.model.address.Address;
-import gestao.model.bloodbank.BloodBankItem;
 import gestao.model.patient.Patient;
 import gestao.model.person.Person;
 import gestao.model.product.Product;
@@ -48,9 +48,6 @@ public class Hospital {
 	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hospital")
 	private List<ProductItem> stock = new ArrayList<>();
-
-	@OneToMany(mappedBy = "hospital")
-	private List<BloodBankItem> bloodBank = new ArrayList<>();
 
 	public static final Integer MIN_STOCK_AMOUNT = 4;
 
@@ -80,15 +77,12 @@ public class Hospital {
 		return numberOfBedsOccupied < maximumNumberOfBeds;
 	}
 
-	public ProductItem addProductInStock(Product product, Integer amount) {
-		ProductItem productItem = this.getProductItem(product).orElse(null);
+	public ProductItem addProductInStock(Product product, Integer amount, LocalDate expirationDate) {
 
-		if (productItem != null) {
-			productItem.increaseAmount(amount);
-		} else {
-			productItem = ProductItem.builder().withAmount(amount).withProduct(product).withHospital(this).build();
-			this.stock.add(productItem);
-		}
+		ProductItem productItem = ProductItem.builder().withAmount(amount).withExpirationDate(expirationDate)
+				.withProduct(product).withHospital(this).build();
+
+		this.stock.add(productItem);
 
 		return productItem;
 	}

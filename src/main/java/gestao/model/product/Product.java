@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.SQLDelete;
@@ -18,6 +20,7 @@ import gestao.model.BaseEntity;
 @Entity
 @SQLDelete(sql = "UPDATE Product SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Product extends BaseEntity {
 
 	@Id
@@ -26,17 +29,17 @@ public class Product extends BaseEntity {
 	private Long id;
 
 	@Column
-	@NotBlank(message="O produto deve possuir um nome.")
+	@NotBlank(message = "O produto deve possuir um nome.")
 	private String name;
 
 	@Column
-	@NotBlank(message="O produto deve possuir uma descrição.")
+	@NotBlank(message = "O produto deve possuir uma descrição.")
 	private String description;
 
 	Product() {
-		
+
 	}
-	
+
 	Product(Long id, String name, String description) {
 		this.id = id;
 		this.name = name;
@@ -54,9 +57,9 @@ public class Product extends BaseEntity {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void update(Product product) {
-		if(product != null) {
+		if (product != null) {
 			this.name = product.getName();
 			this.description = product.getDescription();
 		}
