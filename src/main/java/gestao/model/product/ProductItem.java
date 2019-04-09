@@ -18,7 +18,7 @@ import gestao.model.hospital.Hospital;
 import gestao.model.product.dto.ProductItemDto;
 
 @Entity
-@SQLDelete(sql = "UPDATE ProductItem SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE product_item SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 public class ProductItem extends BaseEntity {
 

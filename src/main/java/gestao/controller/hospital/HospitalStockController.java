@@ -50,17 +50,17 @@ public class HospitalStockController {
 		return productItem.convertToDto();
 	}
 
-	@PutMapping("/stock/items/{productItemId}")
-	public ProductItemDto reduceProductInStock(@PathVariable Long productItemId,
-			@RequestBody @Valid ProductItemDto productItemDto) {
+	@PutMapping("/stock/{productItemId}")
+	public ProductItemDto reduceProductInStock(@PathVariable("productItemId") Long productItemId,
+			@RequestBody @Valid ProductAmountDto productAmountDto) {
 
 		ProductItem productItem = this.hospitalStockService.reduceProductInStock(productItemId,
-				productItemDto.getAmount());
+				productAmountDto.getAmount());
 
 		return productItem.convertToDto();
 	}
 
-	@DeleteMapping("/stock/items/{productItemId}")
+	@DeleteMapping("/stock/{productItemId}")
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void deleteProductInStock(@PathVariable Long productItemId) {
 		this.hospitalStockService.deleteProductInStock(productItemId);

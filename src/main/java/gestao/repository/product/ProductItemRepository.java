@@ -29,7 +29,7 @@ public interface ProductItemRepository extends PagingAndSortingRepository<Produc
 
 	Page<ProductItem> findAllByHospitalId(Long hospitalId, Pageable pageable);
 
-	@Query("SELECT p FROM ProductItem p WHERE p.hospital.id = ?1 AND p.product.id = ?2 AND p.amount-?3 >= ?4 AND p.expirationDate >= CURRENT_DATE ORDER BY p.expirationDate DESC")
+	@Query("SELECT p FROM ProductItem p WHERE p.hospital.id = ?1 AND p.product.id = ?2 AND p.amount-?3 >= ?4 AND p.expirationDate >= CURRENT_DATE ORDER BY p.expirationDate ASC")
 	ProductItem checkIfAHospitalIsAbleToTransferItemsOfAProduct(Long hospitalId, Long productId, Integer amount,
 			Integer minAmountOfItemsAHospitalMustHave);
 

@@ -40,11 +40,11 @@ public class HospitalStockService {
 
 		if (productItem != null) {
 			productItem.increaseAmount(amount);
-			this.productItemService.save(productItem);
 		} else {
 			productItem = hospital.addProductInStock(product, amount, expirationDate);
-			this.hospitalService.save(hospital);
 		}
+	
+		this.productItemService.save(productItem);
 
 		return productItem;
 	}

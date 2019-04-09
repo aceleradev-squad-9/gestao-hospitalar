@@ -252,8 +252,6 @@ public class HospitalStockServiceTest {
 		when(mockedProductItemService.findProductItem(hospitalA, product, productItemC.getExpirationDate()))
 				.thenReturn(Optional.empty());
 
-		when(mockedHospitalService.save(hospitalA)).thenReturn(hospitalA);
-
 		ProductItem increasedProductItem = this.hospitalStockService
 				.transferProductItemFromTheFirstAbleHospital(hospitals, hospitalA, product, REQUESTED_AMOUNT);
 
@@ -264,7 +262,7 @@ public class HospitalStockServiceTest {
 		Mockito.verify(mockedProductItemService, Mockito.times(1)).reduceAmountOfItems(productItemC.getId(),
 				REQUESTED_AMOUNT);
 
-		Mockito.verify(mockedHospitalService, times(1)).save(hospitalA);
+		Mockito.verify(mockedProductItemService, times(1)).save(increasedProductItem);
 	}
 
 	@Test
