@@ -29,10 +29,18 @@ public class ProductItemService {
 		return this.productItemRepository.findAllByHospitalId(hospitalId, pageable).map(ProductItem::convertToDto);
 	}
 
-	public ProductItem findProductItemAbleToTransferOnHospital(Hospital hospital, Product product, Integer amount,
-			Integer minAmountAHospitalShouldHave) {
-		return this.productItemRepository.checkIfAHospitalIsAbleToTransferItemsOfAProduct(hospital.getId(),
-				product.getId(), amount, minAmountAHospitalShouldHave);
+	public ProductItem findProductItemAbleToBeTransferedFromHospital(
+		Hospital hospital, 
+		Product product, 
+		Integer amount,
+		Integer minAmountAHospitalShouldHave
+	) {
+		return this.productItemRepository.checkIfAHospitalIsAbleToTransferItemsOfAProduct(
+			hospital.getId(),
+			product.getId(), 
+			amount, 
+			minAmountAHospitalShouldHave
+		);
 	}
 
 	public void reduceAmountOfItems(Long productItemId, Integer amount) {
