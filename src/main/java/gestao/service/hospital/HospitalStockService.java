@@ -78,8 +78,13 @@ public class HospitalStockService {
 			Hospital hospitalNeedingTransfer, Product product, Integer amount) {
 
 		ProductItem productFromhospitalAbleToTransfer = hospitals.stream()
-				.map((hospital) -> productItemService.findProductItemAbleToTransferOnHospital(hospital,
-						product, amount, Hospital.MIN_STOCK_AMOUNT))
+				.map((hospital) -> productItemService.findProductItemAbleToBeTransferedFromHospital(
+						hospital,
+						product,
+						amount,
+						Hospital.MIN_STOCK_AMOUNT
+					)
+				)
 				.filter(Objects::nonNull)
 				.findFirst().orElseThrow(NoHospitalAbleToTransferProductException::new);
 
