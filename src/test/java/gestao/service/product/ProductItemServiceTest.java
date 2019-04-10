@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class ProductItemServiceTest {
   private ProductItemService productItemService;
 
   @Test
+  @DisplayName("Testar se o método ProductItemService.findProductItemAbleToBeTransferedFromHospital está retornando o ProductItem correto.")
   public void findProductItemAbleToBeTransferedFromHospital(){
     final Long HOSPITAL1_ID = 1L;
     Hospital hospital1 = HospitalHelper.getAHospitalWithValidProperties(HOSPITAL1_ID);
