@@ -199,10 +199,10 @@ public class HospitalStockServiceTest {
 
 		when(mockedHospitalService.findNearestHospitals(hospitalA)).thenReturn(hospitals);
 
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalC, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalC, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(null);
 		
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalB, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalB, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(productItemB);
 
 		when(mockedProductItemService.findProductItem(hospitalA, product, productItemB.getExpirationDate()))
@@ -243,10 +243,10 @@ public class HospitalStockServiceTest {
 
 		when(mockedHospitalService.findNearestHospitals(hospitalA)).thenReturn(hospitals);
 
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalB, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalB, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(null);
 
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalC, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalC, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(productItemC);
 
 		when(mockedProductItemService.findProductItem(hospitalA, product, productItemC.getExpirationDate()))
@@ -281,10 +281,10 @@ public class HospitalStockServiceTest {
 
 		when(mockedHospitalService.findNearestHospitals(hospitalA)).thenReturn(hospitals);
 
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalB, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalB, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(null);
 
-		when(mockedProductItemService.findProductItemAbleToTransferOnHospital(hospitalC, product, REQUESTED_AMOUNT,
+		when(mockedProductItemService.findProductItemAbleToBeTransferedFromHospital(hospitalC, product, REQUESTED_AMOUNT,
 				Hospital.MIN_STOCK_AMOUNT)).thenReturn(null);
 
 		assertThrows(NoHospitalAbleToTransferProductException.class, () -> {
