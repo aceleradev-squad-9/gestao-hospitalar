@@ -34,13 +34,15 @@ public class PatientDto {
 	@JsonInclude(Include.NON_NULL)
 	private LocalDateTime timeCheckOut;
 
-	PatientDto(Long id, String name, String cpf, LocalDate dateOfBirth, Gender gender, LocalDateTime timeCheckIn) {
+	PatientDto(Long id, String name, String cpf, LocalDate dateOfBirth, Gender gender, 
+			LocalDateTime timeCheckIn, LocalDateTime timeCheckOut) {
 		this.id = id;
 		this.name = name;
 		this.cpf = cpf;
 		this.dateOfBirth = dateOfBirth;
 		this.gender = gender;
 		this.timeCheckIn = timeCheckIn;
+		this.timeCheckOut = timeCheckOut;
 	}
 
 	public String getName() {

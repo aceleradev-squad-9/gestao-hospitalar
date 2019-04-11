@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.patient.PatientAlreadyHasCheckInOnHospitalException;
+import gestao.exception.patient.PatientAlreadyHasCheckOutOnHospitalException;
 import gestao.exception.patient.PatientNotFoundException;
 import gestao.model.hospital.Hospital;
 import gestao.model.patient.Patient;
@@ -38,6 +39,10 @@ public class PatientService {
 	public Patient checkOut(Long patientId) {
 		Patient patient = this.findById(patientId);
 
+		if (patient.hasCheckedOut()) {
+			throw new PatientAlreadyHasCheckOutOnHospitalException();
+		}
+		
 		patient.doCheckOut();
 
 		return this.repository.save(patient);

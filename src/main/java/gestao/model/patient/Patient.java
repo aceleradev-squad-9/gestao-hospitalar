@@ -69,7 +69,10 @@ public class Patient {
 
 	public void doCheckOut() {
 		this.timeCheckOut = LocalDateTime.now();
-		
+	}
+	
+	public Boolean hasCheckedOut() {
+		return this.getTimeCheckOut() != null;
 	}
 
 	public Hospital getHospital() {
@@ -84,7 +87,8 @@ public class Patient {
 				person.getCpf(), 
 				person.getDateOfBirth(), 
 				person.getGender(),
-				this.getTimeCheckIn());
+				this.getTimeCheckIn(),
+				this.getTimeCheckOut());
 	}
 
 	public static PatientBuilder builder() {
