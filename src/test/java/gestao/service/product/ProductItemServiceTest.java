@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,9 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import gestao.helper.hospital.HospitalHelper;
 import gestao.model.hospital.Hospital;
@@ -52,15 +56,16 @@ public class ProductItemServiceTest {
       .withProduct(product1)
       .withExpirationDate(LocalDate.of(2020, 10, 10))
       .build();
-
+    
     when(
       productItemRepository.checkIfAHospitalIsAbleToTransferItemsOfAProduct(
         hospital1.getId(),
         product1.getId(),
         AMOUNT_TO_BE_TRANSFERRED,
-        Hospital.MIN_STOCK_AMOUNT
+        Hospital.MIN_STOCK_AMOUNT,
+        PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "expirationDate"))
       )
-    ).thenReturn(productItemToBeTransferred);
+    ).thenReturn(new PageImpl<ProductItem>(Arrays.asList(productItemToBeTransferred)));
 
     ProductItem transferredProductItem = productItemService
       .findProductItemAbleToBeTransferedFromHospital(
@@ -76,7 +81,8 @@ public class ProductItemServiceTest {
       hospital1.getId(),
       product1.getId(),
       AMOUNT_TO_BE_TRANSFERRED,
-      Hospital.MIN_STOCK_AMOUNT
+      Hospital.MIN_STOCK_AMOUNT,
+      PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "expirationDate"))
     );
   }
 }

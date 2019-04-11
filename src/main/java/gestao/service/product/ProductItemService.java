@@ -1,11 +1,14 @@
 package gestao.service.product;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import gestao.exception.hospital.ProductNotFoundInHospitalStockException;
@@ -29,18 +32,20 @@ public class ProductItemService {
 		return this.productItemRepository.findAllByHospitalId(hospitalId, pageable).map(ProductItem::convertToDto);
 	}
 
-	public ProductItem findProductItemAbleToBeTransferedFromHospital(
-		Hospital hospital, 
-		Product product, 
-		Integer amount,
-		Integer minAmountAHospitalShouldHave
-	) {
-		return this.productItemRepository.checkIfAHospitalIsAbleToTransferItemsOfAProduct(
-			hospital.getId(),
-			product.getId(), 
-			amount, 
-			minAmountAHospitalShouldHave
-		);
+	public ProductItem findProductItemAbleToBeTransferedFromHospital(Hospital hospital, Product product, Integer amount,
+			Integer minAmountAHospitalShouldHave) {
+
+		ProductItem productItem = null;
+
+		Page<ProductItem> pageList = this.productItemRepository.checkIfAHospitalIsAbleToTransferItemsOfAProduct(
+				hospital.getId(), product.getId(), amount, minAmountAHospitalShouldHave,
+				PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "expirationDate")));
+
+		if (pageList.getTotalElements() > 0) {
+			productItem = pageList.getContent().stream().filter(Objects::nonNull).findFirst().orElseGet(null);
+		}
+
+		return productItem;
 	}
 
 	public void reduceAmountOfItems(Long productItemId, Integer amount) {
